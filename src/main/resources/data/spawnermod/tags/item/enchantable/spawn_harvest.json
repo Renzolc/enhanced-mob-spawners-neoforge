@@ -1,0 +1,37 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:enchantable/sword",
+    "#minecraft:enchantable/sharp_weapon",
+    "#minecraft:enchantable/bow",
+    "#minecraft:enchantable/crossbow",
+    {
+      "id": "#farmersdelight:tools/knives",
+      "required": false
+    },
+    {
+      "id": "#c:tools/knife",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:flint_knife",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:iron_knife",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:diamond_knife",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:golden_knife",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:netherite_knife",
+      "required": false
+    }
+  ]
+}

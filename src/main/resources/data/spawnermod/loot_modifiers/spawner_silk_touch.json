@@ -1,0 +1,24 @@
+{
+  "type": "spawnermod:spawner_silk_touch",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:blocks/spawner"
+    },
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "predicates": {
+          "minecraft:enchantments": [
+            {
+              "enchantments": "minecraft:silk_touch",
+              "levels": {
+                "min": 1
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
