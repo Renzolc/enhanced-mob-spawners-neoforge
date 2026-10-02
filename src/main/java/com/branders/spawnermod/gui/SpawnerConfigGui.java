@@ -3,6 +3,8 @@ package com.branders.spawnermod.gui;
 import com.branders.spawnermod.SpawnerMod;
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.networking.packet.SyncSpawnerPacket;
+import com.branders.spawnermod.networking.packet.UpdateSpawnerTrackingPacket;
+import com.branders.spawnermod.spawner.CompassTrackingAccess;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -67,6 +69,7 @@ public class SpawnerConfigGui extends Screen {
     private short maxNearbyEntities;
     private short requiredPlayerRange;
     private boolean disabled;
+    private boolean compassTracking = true;
     private short spawns;
 
     private final boolean cachedDisabled;
@@ -107,6 +110,10 @@ public class SpawnerConfigGui extends Screen {
         countOptionValue = loadOptionState(spawnCount, SPAWN_COUNT);
         speedOptionValue = loadOptionState(minSpawnDelay, MIN_SPAWN_DELAY);
         rangeOptionValue = loadOptionState(requiredPlayerRange, REQUIRED_PLAYER_RANGE);
+
+        if (logic instanceof CompassTrackingAccess access) {
+            compassTracking = access.spawnermod$isCompassTracking();
+        }
 
         if (ConfigValues.get("limited_spawns_enabled") != 0) {
             limitedSpawns = true;
@@ -234,6 +241,14 @@ public class SpawnerConfigGui extends Screen {
                     }
                     disableButton.setMessage(Component.translatable("button.toggle." + getButtonText(disabled)));
                 }).bounds(width / 2 - 48, 130, 108, 20).build());
+
+        addRenderableWidget(Button.builder(
+                Component.translatable("button.compass_tracking." + (compassTracking ? "on" : "off")), button -> {
+                    compassTracking = !compassTracking;
+                    button.setMessage(Component.translatable(
+                            "button.compass_tracking." + (compassTracking ? "on" : "off")));
+                    PacketDistributor.sendToServer(new UpdateSpawnerTrackingPacket(pos, compassTracking));
+                }).bounds(width / 2 - 89, 155, 178, 20).build());
 
         addRenderableWidget(Button.builder(Component.translatable("button.save"), button -> {
             configureSpawner();

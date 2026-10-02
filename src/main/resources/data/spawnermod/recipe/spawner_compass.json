@@ -1,0 +1,16 @@
+{
+  "type": "crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:compass"
+    },
+    {
+      "item": "minecraft:spawner"
+    }
+  ],
+  "result": {
+    "id": "spawnermod:spawner_compass",
+    "count": 1
+  }
+}

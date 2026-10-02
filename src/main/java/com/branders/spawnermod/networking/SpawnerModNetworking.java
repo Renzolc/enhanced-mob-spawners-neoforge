@@ -5,17 +5,24 @@ import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.item.SpawnerKey;
 import com.branders.spawnermod.networking.packet.SyncConfigPacket;
 import com.branders.spawnermod.networking.packet.SyncSpawnerPacket;
+import com.branders.spawnermod.networking.packet.SyncSpawnerTrackingPacket;
+import com.branders.spawnermod.networking.packet.UpdateSpawnerTrackingPacket;
+import com.branders.spawnermod.spawner.CompassTrackingAccess;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -30,6 +37,58 @@ public class SpawnerModNetworking {
 
         registrar.playToClient(SyncConfigPacket.TYPE, SyncConfigPacket.STREAM_CODEC,
                 SpawnerModNetworking::handleSyncConfig);
+
+        registrar.playToServer(UpdateSpawnerTrackingPacket.TYPE, UpdateSpawnerTrackingPacket.STREAM_CODEC,
+                SpawnerModNetworking::handleUpdateTracking);
+
+        registrar.playToClient(SyncSpawnerTrackingPacket.TYPE, SyncSpawnerTrackingPacket.STREAM_CODEC,
+                SpawnerModNetworking::handleSyncTracking);
+    }
+
+    private static void handleUpdateTracking(UpdateSpawnerTrackingPacket payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            if (!(player.level() instanceof ServerLevel world)) {
+                return;
+            }
+
+            BlockPos pos = payload.pos();
+            if (!player.blockPosition().closerThan(pos, 16.0D)) {
+                return;
+            }
+            if (!(world.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner)) {
+                return;
+            }
+            if (!(spawner.getSpawner() instanceof CompassTrackingAccess access)) {
+                return;
+            }
+
+            access.spawnermod$setCompassTracking(payload.tracking());
+            spawner.setChanged();
+            BlockState state = world.getBlockState(pos);
+            world.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
+
+            SyncSpawnerTrackingPacket sync = new SyncSpawnerTrackingPacket(pos, payload.tracking());
+            PacketDistributor.sendToPlayersTrackingChunk(world, new ChunkPos(pos), sync);
+            PacketDistributor.sendToPlayer(player, sync);
+
+            player.displayClientMessage(Component.translatable(payload.tracking()
+                    ? "message.spawnermod.compass_tracking.on"
+                    : "message.spawnermod.compass_tracking.off"), true);
+        });
+    }
+
+    private static void handleSyncTracking(SyncSpawnerTrackingPacket payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player().level().getBlockEntity(payload.pos()) instanceof SpawnerBlockEntity spawner)) {
+                return;
+            }
+            if (spawner.getSpawner() instanceof CompassTrackingAccess access) {
+                access.spawnermod$setCompassTracking(payload.tracking());
+            }
+        });
     }
 
     private static void handleSyncSpawner(SyncSpawnerPacket payload, IPayloadContext context) {

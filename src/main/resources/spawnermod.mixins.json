@@ -10,7 +10,8 @@
     "SpawnerBlockCancelDropMixin",
     "UpdateNeighborMixin",
     "SpawnerRangeMixin",
-    "BlockHardnessMixin"
+    "BlockHardnessMixin",
+    "CompassTrackingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
