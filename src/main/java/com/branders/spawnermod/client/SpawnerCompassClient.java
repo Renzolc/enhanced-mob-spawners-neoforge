@@ -23,6 +23,9 @@ import net.neoforged.api.distmarker.OnlyIn;
  * Client needle for the spawner compass. The angle itself is vanilla's
  * {@link CompassItemPropertyFunction}: a real target points, and a null target
  * spins the same way a recovery compass does with nowhere to point.
+ * The needle follows the living entity the item is rendered for. Curios draws
+ * belt-slot items with the local player, so a compass worn on the belt keeps
+ * pointing and does not have to be in either hand.
  */
 @OnlyIn(Dist.CLIENT)
 public final class SpawnerCompassClient {
