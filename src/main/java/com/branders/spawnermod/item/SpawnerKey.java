@@ -26,7 +26,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Spawner Key — opens the spawner config GUI. Damageable so Unbreaking /
- * Mending are meaningful (durability 64, similar to a low-tier tool; each GUI
+ * Mending are meaningful (durability 16, similar to a low-tier tool; each GUI
  * save damages the key by 1 as in the Fabric mod).
  *
  * @author Anders &lt;Branders&gt; Blomqvist

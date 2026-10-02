@@ -22,7 +22,7 @@ public class ModRegistry {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(SpawnerMod.MOD_ID);
 
     public static final DeferredItem<Item> SPAWNER_KEY = ITEMS.registerItem("spawner_key",
-            SpawnerKey::new, new Item.Properties().durability(64).rarity(Rarity.RARE));
+            SpawnerKey::new, new Item.Properties().durability(16).rarity(Rarity.RARE));
 
     public static final DeferredItem<Item> SPAWNER_COMPASS = ITEMS.registerItem("spawner_compass",
             SpawnerCompassItem::new, new Item.Properties().rarity(Rarity.RARE));
