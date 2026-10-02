@@ -1,6 +1,7 @@
 package com.branders.spawnermod.networking;
 
 import com.branders.spawnermod.SpawnerMod;
+import com.branders.spawnermod.compat.WornSpawnerItems;
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.item.SpawnerKey;
 import com.branders.spawnermod.networking.packet.SyncConfigPacket;
@@ -130,13 +131,28 @@ public class SpawnerModNetworking {
             spawner.setChanged();
             world.sendBlockUpdated(pos, blockstate, blockstate, Block.UPDATE_ALL);
 
-            ItemStack stack = context.player().getMainHandItem();
-            if (stack.getItem() instanceof SpawnerKey) {
-                stack.hurtAndBreak(1, context.player(), EquipmentSlot.MAINHAND);
-            }
+            damageUsedKey(context.player() instanceof net.minecraft.server.level.ServerPlayer serverPlayer
+                    ? serverPlayer : null, world);
 
             world.levelEvent(LevelEvent.PARTICLES_WAX_OFF, pos, 0);
         });
+    }
+
+    private static void damageUsedKey(net.minecraft.server.level.ServerPlayer player, ServerLevel world) {
+        if (player == null) {
+            return;
+        }
+        ItemStack main = player.getMainHandItem();
+        if (main.getItem() instanceof SpawnerKey) {
+            main.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+            return;
+        }
+        ItemStack off = player.getOffhandItem();
+        if (off.getItem() instanceof SpawnerKey) {
+            off.hurtAndBreak(1, player, EquipmentSlot.OFFHAND);
+            return;
+        }
+        WornSpawnerItems.damageBeltKey(player, world);
     }
 
     private static void handleSyncConfig(SyncConfigPacket payload, IPayloadContext context) {

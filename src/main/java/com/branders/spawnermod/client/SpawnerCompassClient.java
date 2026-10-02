@@ -54,14 +54,16 @@ public final class SpawnerCompassClient {
         if (entity == null || level == null) {
             return null;
         }
-        BlockPos pos = findNearest(level, entity);
+        // Hotbar icons are drawn for every slot, selected or not, with the local player.
+        BlockPos pos = findNearestTracked(level, entity);
         if (pos == null) {
             return null;
         }
         return GlobalPos.of(level.dimension(), pos);
     }
 
-    private static BlockPos findNearest(ClientLevel level, Entity entity) {
+    /** Nearest tracked spawner inside the horizontal radius, or null. Cached for a short interval. */
+    public static BlockPos findNearestTracked(ClientLevel level, Entity entity) {
         long tick = level.getGameTime();
         if (cacheValid && cachedEntityId == entity.getId() && cachedDimension == level.dimension()
                 && tick >= cachedTick && tick - cachedTick < CACHE_TICKS) {

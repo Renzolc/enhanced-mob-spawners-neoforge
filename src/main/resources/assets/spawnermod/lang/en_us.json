@@ -29,5 +29,6 @@
 	"button.compass_tracking.on": "Compass tracking: On",
 	"button.compass_tracking.off": "Compass tracking: Off",
 	"message.spawnermod.compass_tracking.on": "Compass tracking: On",
-	"message.spawnermod.compass_tracking.off": "Compass tracking: Off"
+	"message.spawnermod.compass_tracking.off": "Compass tracking: Off",
+	"hud.spawnermod.spawner_nearby": "A spawner has been detected nearby (%s blocks)"
 }

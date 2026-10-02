@@ -5,7 +5,7 @@ NeoForge port of **[Enhanced Mob Spawners](https://github.com/andersblomqvist/en
 | | |
 |---|---|
 | **Mod id** | `spawnermod` |
-| **Version** | 1.2.10 |
+| **Version** | 1.2.11 |
 | **Minecraft** | 1.21.1 |
 | **Loader** | NeoForge |
 | **License** | [CC0-1.0](LICENSE) (same as upstream) |
@@ -43,7 +43,7 @@ Craft a **Spawner Compass** with one compass and one mob spawner (shapeless). Ho
 
 The Spawner Key config screen has a **Compass tracking** button on the bottom row. Click it to turn tracking off or on for that spawner. The choice is saved on the spawner, and spawners you have not changed stay tracked.
 
-If Curios is installed, the Spawner Key and Spawner Compass can be worn in the belt slot. The compass still points while it is in that slot. If Supplementaries is installed as well, this mod adds only the missing belt slots so there are at least four (this key, this compass, Supplementaries' key, and its quiver). A belt that is already that large is not grown again.
+If Curios is installed, the Spawner Key and Spawner Compass can be worn in the belt slot. Right-click a mob spawner while the key is on the belt and the config screen still opens, even if your hands are empty or holding something else. The compass still points from the belt and from any hotbar slot. While it is in the hotbar or on the belt and a tracked spawner is within 128 blocks, a line at the top of the screen shows that a spawner was detected and the distance in blocks. If Supplementaries is installed as well, this mod adds only the missing belt slots so there are at least four (this key, this compass, Supplementaries' key, and its quiver). A belt that is already that large is not grown again.
 
 ## Build
 
@@ -51,7 +51,7 @@ If Curios is installed, the Spawner Key and Spawner Compass can be worn in the b
 ./gradlew build
 ```
 
-Jar: `build/libs/spawnermod-1.2.10.jar`
+Jar: `build/libs/spawnermod-1.2.11.jar`
 
 ## Port notes
 

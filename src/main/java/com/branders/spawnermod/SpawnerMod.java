@@ -7,6 +7,7 @@ import com.branders.spawnermod.compat.BeltSlotGrants;
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.config.ModConfigManager;
 import com.branders.spawnermod.event.EventHandler;
+import com.branders.spawnermod.event.SpawnerKeyEvents;
 import com.branders.spawnermod.loot.ModLootModifiers;
 import com.branders.spawnermod.networking.SpawnerModNetworking;
 import com.branders.spawnermod.networking.packet.SyncConfigPacket;
@@ -47,6 +48,7 @@ public class SpawnerMod {
         NeoForge.EVENT_BUS.addListener(this::onPlayerJoin);
         NeoForge.EVENT_BUS.addListener(this::onPlayerRespawn);
         NeoForge.EVENT_BUS.addListener(this::onPlayerChangeDimension);
+        NeoForge.EVENT_BUS.addListener(SpawnerKeyEvents::onRightClickBlock);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             SpawnerModClient.init(modEventBus);

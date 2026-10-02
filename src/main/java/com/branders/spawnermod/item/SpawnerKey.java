@@ -101,14 +101,13 @@ public class SpawnerKey extends Item {
             return InteractionResult.FAIL;
 
         BaseSpawner logic = spawner.getSpawner();
-        openSpawnerGui(logic, pos);
+        openScreen(logic, pos);
 
         return InteractionResult.SUCCESS;
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void openSpawnerGui(BaseSpawner logic, BlockPos pos) {
-        Minecraft mc = Minecraft.getInstance();
-        mc.setScreen(new SpawnerConfigGui(Component.translatable(""), logic, pos));
+    public static void openScreen(BaseSpawner logic, BlockPos pos) {
+        Minecraft.getInstance().setScreen(new SpawnerConfigGui(Component.translatable(""), logic, pos));
     }
 }
