@@ -2,6 +2,7 @@ package com.branders.spawnermod.registry;
 
 import com.branders.spawnermod.SpawnerMod;
 import com.branders.spawnermod.command.SpawnerModCommands;
+import com.branders.spawnermod.item.SpawnerCompassItem;
 import com.branders.spawnermod.item.SpawnerKey;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,6 +24,9 @@ public class ModRegistry {
     public static final DeferredItem<Item> SPAWNER_KEY = ITEMS.registerItem("spawner_key",
             SpawnerKey::new, new Item.Properties().durability(64).rarity(Rarity.RARE));
 
+    public static final DeferredItem<Item> SPAWNER_COMPASS = ITEMS.registerItem("spawner_compass",
+            SpawnerCompassItem::new, new Item.Properties().rarity(Rarity.RARE));
+
     public static void register(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
         modEventBus.addListener(ModRegistry::addCreative);
@@ -32,6 +36,7 @@ public class ModRegistry {
     private static void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(SPAWNER_KEY);
+            event.accept(SPAWNER_COMPASS);
         }
     }
 

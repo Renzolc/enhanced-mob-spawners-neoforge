@@ -5,7 +5,7 @@ NeoForge port of **[Enhanced Mob Spawners](https://github.com/andersblomqvist/en
 | | |
 |---|---|
 | **Mod id** | `spawnermod` |
-| **Version** | 1.0.0 |
+| **Version** | 1.2.9 |
 | **Minecraft** | 1.21.1 |
 | **Loader** | NeoForge |
 | **License** | [CC0-1.0](LICENSE) (same as upstream) |
@@ -36,13 +36,20 @@ All credit for the original design, features, assets, and implementation goes to
 - Egg removal from spawners, limited spawns, hardness / default range options
 - Redstone toggle, JSON config, `/ems` commands (integrated)
 
+
+## Spawner Compass
+
+Craft a **Spawner Compass** with one compass and one mob spawner (shapeless). Hold it in either hand and it points at the nearest loaded mob spawner within 128 blocks, the same way a compass points at a lodestone. If nothing in range can be tracked, the needle spins.
+
+The Spawner Key config screen has a **Compass tracking** button on the bottom row. Click it to turn tracking off or on for that spawner. The choice is saved on the spawner, and spawners you have not changed stay tracked.
+
 ## Build
 
 ```bash
 ./gradlew build
 ```
 
-Jar: `build/libs/spawnermod-1.0.0.jar`
+Jar: `build/libs/spawnermod-1.2.9.jar`
 
 ## Port notes
 
