@@ -3,6 +3,7 @@ package com.branders.spawnermod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.branders.spawnermod.compat.BeltSlotGrants;
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.config.ModConfigManager;
 import com.branders.spawnermod.event.EventHandler;
@@ -44,6 +45,8 @@ public class SpawnerMod {
 
         NeoForge.EVENT_BUS.register(eventHandler);
         NeoForge.EVENT_BUS.addListener(this::onPlayerJoin);
+        NeoForge.EVENT_BUS.addListener(this::onPlayerRespawn);
+        NeoForge.EVENT_BUS.addListener(this::onPlayerChangeDimension);
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             SpawnerModClient.init(modEventBus);
@@ -72,5 +75,18 @@ public class SpawnerMod {
                         ConfigValues.get("limited_spawns_amount"),
                         ConfigValues.get("default_spawner_range_enabled"),
                         ConfigValues.get("default_spawner_range")));
+        BeltSlotGrants.schedule(player);
+    }
+
+    private void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            BeltSlotGrants.schedule(player);
+        }
+    }
+
+    private void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            BeltSlotGrants.schedule(player);
+        }
     }
 }

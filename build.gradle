@@ -27,7 +27,10 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    maven {
+        name = "Illusive Soulworks"
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 base {
@@ -116,6 +119,9 @@ configurations {
 }
 
 dependencies {
+    // Optional. Not bundled and not required at runtime.
+    compileOnly "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

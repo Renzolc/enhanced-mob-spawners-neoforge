@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "spawnermod:spawner_key",
+    "spawnermod:spawner_compass"
+  ]
+}
