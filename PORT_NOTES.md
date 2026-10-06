@@ -53,3 +53,16 @@ StreamCodec.composite is limited to 6 fields; packets with more use `StreamCodec
 - Listed in `#minecraft:non_treasure` so it appears in the enchanting table.
 - Kill egg drops: **only** when the killing weapon has Spawn Harvest (100%). `DamageSource#getWeaponItem()` covers melee main-hand and bow/crossbow projectiles.
 - Config `monster_egg_drop_chance` is ignored for drops (random chance removed).
+
+## Port to Minecraft 1.21.4 (NeoForge 21.4.158, branch `mc/1.21.4`)
+- `Item.Properties` IDs are set by `DeferredRegister.Items#registerItem`; enchantability is now the
+  `enchantable(14)` property (the `isEnchantable`/`getEnchantmentValue` overrides are gone).
+- Item models: `assets/spawnermod/items/*.json`. The compass needle uses a custom
+  `range_dispatch` property `spawnermod:spawner_compass` (`SpawnerCompassAngle`, registered with
+  `RegisterRangeSelectItemModelPropertyEvent`), replacing `ItemProperties.register`.
+- Recipes use the 1.21.2+ ingredient format (`"minecraft:diamond"` instead of `{"item": ...}`).
+- `GuiGraphics#blit` takes `RenderType::guiTextured`.
+- `BlockBehaviour#neighborChanged` no longer passes the source position; the redstone toggle
+  now reacts when the notified block is the spawner itself.
+- `Mob#dropFromLootTable` gained a `ServerLevel` parameter. `MinecraftServer#tell` is `schedule`.
+- `Registry#get(ResourceLocation)` returns an `Optional`; lookups use `getValue`.

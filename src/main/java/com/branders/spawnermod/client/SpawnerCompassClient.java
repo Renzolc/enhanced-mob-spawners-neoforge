@@ -1,15 +1,11 @@
 package com.branders.spawnermod.client;
 
-import com.branders.spawnermod.registry.ModRegistry;
 import com.branders.spawnermod.spawner.CompassTrackingAccess;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -20,9 +16,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 /**
- * Client needle for the spawner compass. The angle itself is vanilla's
- * {@link CompassItemPropertyFunction}: a real target points, and a null target
- * spins the same way a recovery compass does with nowhere to point.
+ * Client target lookup for the spawner compass. The needle angle is computed by
+ * {@link SpawnerCompassAngle} (item model property {@code spawnermod:spawner_compass}):
+ * a real target points, and a null target spins the same way a compass does with
+ * nowhere to point.
  * The needle follows the living entity the item is rendered for. Curios draws
  * belt-slot items with the local player, so a compass worn on the belt keeps
  * pointing and does not have to be in either hand.
@@ -45,12 +42,7 @@ public final class SpawnerCompassClient {
     private SpawnerCompassClient() {
     }
 
-    public static void register() {
-        ItemProperties.register(ModRegistry.SPAWNER_COMPASS.get(), ResourceLocation.withDefaultNamespace("angle"),
-                new CompassItemPropertyFunction(SpawnerCompassClient::target));
-    }
-
-    private static GlobalPos target(ClientLevel level, ItemStack stack, Entity entity) {
+    static GlobalPos target(ClientLevel level, ItemStack stack, Entity entity) {
         if (entity == null || level == null) {
             return null;
         }

@@ -81,7 +81,7 @@ public class SpawnerModGameTests {
     }
 
     private static Holder<Enchantment> enchantment(ServerLevel level, ResourceKey<Enchantment> key) {
-        return level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(key);
+        return level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(key);
     }
 
     private static CompoundTag spawnerNbt(SpawnerBlockEntity spawner) {
@@ -213,10 +213,10 @@ public class SpawnerModGameTests {
             ItemStack sword = new ItemStack(Items.IRON_SWORD);
             sword.enchant(enchantment(level, ModEnchantments.SPAWN_HARVEST), 1);
             player.setItemInHand(InteractionHand.MAIN_HAND, sword);
-            harvested.hurt(level.damageSources().playerAttack(player), Float.MAX_VALUE);
+            harvested.hurtServer(level, level.damageSources().playerAttack(player), Float.MAX_VALUE);
 
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
-            plain.hurt(level.damageSources().playerAttack(player), Float.MAX_VALUE);
+            plain.hurtServer(level, level.damageSources().playerAttack(player), Float.MAX_VALUE);
         } finally {
             player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         }

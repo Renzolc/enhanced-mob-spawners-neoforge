@@ -22,7 +22,7 @@ public class ModRegistry {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(SpawnerMod.MOD_ID);
 
     public static final DeferredItem<Item> SPAWNER_KEY = ITEMS.registerItem("spawner_key",
-            SpawnerKey::new, new Item.Properties().durability(16).rarity(Rarity.RARE));
+            SpawnerKey::new, new Item.Properties().durability(16).enchantable(SpawnerKey.ENCHANTMENT_VALUE).rarity(Rarity.RARE));
 
     public static final DeferredItem<Item> SPAWNER_COMPASS = ITEMS.registerItem("spawner_compass",
             SpawnerCompassItem::new, new Item.Properties().rarity(Rarity.RARE));
@@ -51,7 +51,7 @@ public class ModRegistry {
      * @return modid:entity_spawn_egg or whackmod:spawn_egg_entity
      */
     public static String getSpawnEggRegistryName(String entityString) {
-        Item egg = BuiltInRegistries.ITEM.get(ResourceLocation.parse(entityString + "_spawn_egg"));
+        Item egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(entityString + "_spawn_egg"));
 
         if (egg == null || egg == net.minecraft.world.item.Items.AIR) {
             String[] split = entityString.split(":");

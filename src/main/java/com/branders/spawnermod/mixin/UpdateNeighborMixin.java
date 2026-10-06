@@ -8,25 +8,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.branders.spawnermod.event.EventHandler;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SpawnerBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 
 @Mixin(BlockBehaviour.class)
 public class UpdateNeighborMixin {
 
     @Inject(at = @At("HEAD"), method = "neighborChanged")
-    private void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock, BlockPos sourcePos,
-            boolean notify, CallbackInfo ci) {
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        for (Direction dir : Direction.values()) {
-            mutable.setWithOffset(sourcePos, dir);
-            if (world.getBlockState(mutable).getBlock() instanceof SpawnerBlock) {
-                EventHandler.updateNeighbor(mutable, world);
-            }
+    private void neighborChanged(BlockState state, Level world, BlockPos pos, Block sourceBlock,
+            Orientation orientation, boolean movedByPiston, CallbackInfo ci) {
+        // Since 1.21.2 the source position is no longer passed. A spawner next to a
+        // changed block is itself notified, so react when the notified block is a spawner.
+        if (state.getBlock() instanceof SpawnerBlock) {
+            EventHandler.updateNeighbor(pos, world);
         }
     }
 }

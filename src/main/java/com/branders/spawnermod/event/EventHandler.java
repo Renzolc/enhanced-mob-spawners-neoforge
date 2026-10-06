@@ -7,7 +7,6 @@ import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.item.SpawnerKey;
 import com.branders.spawnermod.mixin.UpdateNeighborMixin;
 import com.branders.spawnermod.registry.ModRegistry;
-import com.google.common.collect.Iterables;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -66,7 +65,7 @@ public class EventHandler {
         if (!(world.getBlockState(pos).getBlock() instanceof SpawnerBlock))
             return;
 
-        ItemStack stack = Iterables.get(player.getHandSlots(), 0);
+        ItemStack stack = player.getMainHandItem();
 
         if (checkSilkTouch(stack) && ConfigValues.get("disable_silk_touch") == 0) {
             if (ConfigValues.get("disable_egg_removal_from_spawner") == 0)
@@ -145,7 +144,7 @@ public class EventHandler {
             return InteractionResult.PASS;
 
         String eggId = ModRegistry.getSpawnEggRegistryName(entityString);
-        Item egg = BuiltInRegistries.ITEM.get(ResourceLocation.parse(eggId));
+        Item egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(eggId));
         if (egg == null || egg == Items.AIR) {
             SpawnerMod.LOGGER.info("Could not find spawn egg for: " + entityString);
             return InteractionResult.PASS;
@@ -169,14 +168,14 @@ public class EventHandler {
     }
 
     public static Item getSpawnEgg(String entityString) {
-        Item egg = BuiltInRegistries.ITEM.get(ResourceLocation.parse(entityString + "_spawn_egg"));
+        Item egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(entityString + "_spawn_egg"));
 
         if (egg == Items.AIR) {
             String[] split = entityString.split(":");
             assert (split.length == 2);
             String id = split[0];
             String e = "spawn_egg_" + split[1];
-            egg = BuiltInRegistries.ITEM.get(ResourceLocation.parse(id + ":" + e));
+            egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(id + ":" + e));
         }
 
         return egg;

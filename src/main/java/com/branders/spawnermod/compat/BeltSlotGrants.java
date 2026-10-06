@@ -34,7 +34,7 @@ public final class BeltSlotGrants {
         if (server == null) {
             return;
         }
-        server.tell(new TickTask(server.getTickCount() + 1, () -> {
+        server.schedule(new TickTask(server.getTickCount() + 1, () -> {
             if (player.hasDisconnected()) {
                 return;
             }

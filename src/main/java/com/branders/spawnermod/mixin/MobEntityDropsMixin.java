@@ -27,7 +27,7 @@ import net.minecraft.world.item.Items;
 public class MobEntityDropsMixin {
 
     @Inject(at = @At("HEAD"), method = "dropFromLootTable", cancellable = true)
-    private void dropFromLootTable(DamageSource source, boolean causedByPlayer, CallbackInfo ci) {
+    private void dropFromLootTable(ServerLevel level, DamageSource source, boolean causedByPlayer, CallbackInfo ci) {
         ItemStack weapon = source.getWeaponItem();
         if (weapon == null || weapon.isEmpty() || !hasSpawnHarvest(weapon)) {
             return;

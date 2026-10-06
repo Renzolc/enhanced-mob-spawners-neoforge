@@ -5,8 +5,8 @@ NeoForge port of **[Enhanced Mob Spawners](https://github.com/andersblomqvist/en
 | | |
 |---|---|
 | **Mod id** | `spawnermod` |
-| **Version** | 1.2.13 |
-| **Minecraft** | 1.21.1 |
+| **Version** | 1.2.13+mc1.21.4 |
+| **Minecraft** | 1.21.4 (this branch, `mc/1.21.4`) |
 | **Loader** | NeoForge |
 | **License** | [CC0-1.0](LICENSE) (same as upstream) |
 
@@ -71,7 +71,7 @@ On other versions the check simply finds no Supplementaries and does nothing.
 ./gradlew build
 ```
 
-Jar: `build/libs/spawnermod-1.2.13.jar`
+Jar: `build/libs/spawnermod-1.2.13-mc1.21.4.jar`
 
 ## Tests
 

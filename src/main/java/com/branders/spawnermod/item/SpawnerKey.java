@@ -34,7 +34,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 public class SpawnerKey extends Item {
 
     /** Enchantment value comparable to iron tools so the enchanting table can apply durability enchants. */
-    private static final int ENCHANTMENT_VALUE = 14;
+    public static final int ENCHANTMENT_VALUE = 14;
 
     private static final Component TOOL_TIP = Component.translatable("tooltip.spawnermod.spawner_key_disabled")
             .setStyle(Style.EMPTY.withColor(0xff0000));
@@ -46,21 +46,6 @@ public class SpawnerKey extends Item {
     @Override
     public boolean isFoil(ItemStack stack) {
         return true;
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return ENCHANTMENT_VALUE;
-    }
-
-    @Override
-    public int getEnchantmentValue(ItemStack stack) {
-        return ENCHANTMENT_VALUE;
     }
 
     /**

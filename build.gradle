@@ -15,6 +15,11 @@ tasks.named('wrapper', Wrapper).configure {
 }
 
 version = mod_version
+// Jar file name: spawnermod-<mod>-mc<minecraft>.jar (a "+" is not used in file names).
+base.archivesName = mod_id
+tasks.named('jar', Jar).configure {
+    archiveVersion = mod_version.replace('+', '-')
+}
 group = mod_group_id
 
 sourceSets.main.resources {
@@ -141,10 +146,10 @@ neoForge.addModdingDependenciesTo(sourceSets.gametest)
 
 dependencies {
     // Optional. Not bundled and not required at runtime.
-    compileOnly "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     // Dev runs with Curios installed: ./gradlew runGameTestServer -PwithCurios
     if (project.hasProperty('withCurios')) {
-        localRuntime "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"
+        localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     }
 
     // Example optional mod dependency with JEI
