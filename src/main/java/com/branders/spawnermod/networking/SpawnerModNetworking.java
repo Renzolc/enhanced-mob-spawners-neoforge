@@ -59,17 +59,9 @@ public class SpawnerModNetworking {
             if (!player.blockPosition().closerThan(pos, 16.0D)) {
                 return;
             }
-            if (!(world.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner)) {
+            if (!applyTracking(world, pos, payload.tracking())) {
                 return;
             }
-            if (!(spawner.getSpawner() instanceof CompassTrackingAccess access)) {
-                return;
-            }
-
-            access.spawnermod$setCompassTracking(payload.tracking());
-            spawner.setChanged();
-            BlockState state = world.getBlockState(pos);
-            world.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
 
             SyncSpawnerTrackingPacket sync = new SyncSpawnerTrackingPacket(pos, payload.tracking());
             PacketDistributor.sendToPlayersTrackingChunk(world, new ChunkPos(pos), sync);
@@ -79,6 +71,26 @@ public class SpawnerModNetworking {
                     ? "message.spawnermod.compass_tracking.on"
                     : "message.spawnermod.compass_tracking.off"), true);
         });
+    }
+
+    /**
+     * Sets the compass tracking (ignore toggle) flag on a spawner. Server side only.
+     *
+     * @return false when there is no spawner at that position
+     */
+    public static boolean applyTracking(ServerLevel world, BlockPos pos, boolean tracking) {
+        if (!(world.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner)) {
+            return false;
+        }
+        if (!(spawner.getSpawner() instanceof CompassTrackingAccess access)) {
+            return false;
+        }
+
+        access.spawnermod$setCompassTracking(tracking);
+        spawner.setChanged();
+        BlockState state = world.getBlockState(pos);
+        world.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
+        return true;
     }
 
     private static void handleSyncTracking(SyncSpawnerTrackingPacket payload, IPayloadContext context) {
@@ -98,47 +110,57 @@ public class SpawnerModNetworking {
                 SpawnerMod.LOGGER.warn("Server world is NULL, cannot sync spawner.");
                 return;
             }
-
-            BlockPos pos = payload.pos();
-            short requiredPlayerRange = (short) payload.requiredPlayerRange();
-            short delay = (short) payload.delay();
-            short spawnCount = (short) payload.spawnCount();
-            short maxNearbyEntities = (short) payload.maxNearbyEntities();
-            short minSpawnDelay = (short) payload.minSpawnDelay();
-            short maxSpawnDelay = (short) payload.maxSpawnDelay();
-
-            if (!(world.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner)) {
-                return;
-            }
-
-            BaseSpawner logic = spawner.getSpawner();
-            BlockState blockstate = world.getBlockState(pos);
-            CompoundTag nbt = logic.save(new CompoundTag());
-
-            if (requiredPlayerRange == 0)
-                nbt.putShort("SpawnRange", nbt.getShort("RequiredPlayerRange"));
-            else
-                nbt.putShort("SpawnRange", (short) 4);
-
-            nbt.putShort("Delay", delay);
-            nbt.putShort("SpawnCount", spawnCount);
-            nbt.putShort("RequiredPlayerRange", requiredPlayerRange);
-            nbt.putShort("MaxNearbyEntities", maxNearbyEntities);
-            nbt.putShort("MinSpawnDelay", minSpawnDelay);
-            nbt.putShort("MaxSpawnDelay", maxSpawnDelay);
-
-            logic.load(world, pos, nbt);
-            spawner.setChanged();
-            world.sendBlockUpdated(pos, blockstate, blockstate, Block.UPDATE_ALL);
-
-            damageUsedKey(context.player() instanceof net.minecraft.server.level.ServerPlayer serverPlayer
-                    ? serverPlayer : null, world);
-
-            world.levelEvent(LevelEvent.PARTICLES_WAX_OFF, pos, 0);
+            applySpawnerSettings(world, payload,
+                    context.player() instanceof ServerPlayer serverPlayer ? serverPlayer : null);
         });
     }
 
-    private static void damageUsedKey(net.minecraft.server.level.ServerPlayer player, ServerLevel world) {
+    /**
+     * Applies Spawner Key GUI settings to the spawner at {@code payload.pos()} and
+     * damages the key that was used. Server side only.
+     *
+     * @return false when there is no spawner at that position
+     */
+    public static boolean applySpawnerSettings(ServerLevel world, SyncSpawnerPacket payload, ServerPlayer player) {
+        BlockPos pos = payload.pos();
+        short requiredPlayerRange = (short) payload.requiredPlayerRange();
+        short delay = (short) payload.delay();
+        short spawnCount = (short) payload.spawnCount();
+        short maxNearbyEntities = (short) payload.maxNearbyEntities();
+        short minSpawnDelay = (short) payload.minSpawnDelay();
+        short maxSpawnDelay = (short) payload.maxSpawnDelay();
+
+        if (!(world.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner)) {
+            return false;
+        }
+
+        BaseSpawner logic = spawner.getSpawner();
+        BlockState blockstate = world.getBlockState(pos);
+        CompoundTag nbt = logic.save(new CompoundTag());
+
+        if (requiredPlayerRange == 0)
+            nbt.putShort("SpawnRange", nbt.getShort("RequiredPlayerRange"));
+        else
+            nbt.putShort("SpawnRange", (short) 4);
+
+        nbt.putShort("Delay", delay);
+        nbt.putShort("SpawnCount", spawnCount);
+        nbt.putShort("RequiredPlayerRange", requiredPlayerRange);
+        nbt.putShort("MaxNearbyEntities", maxNearbyEntities);
+        nbt.putShort("MinSpawnDelay", minSpawnDelay);
+        nbt.putShort("MaxSpawnDelay", maxSpawnDelay);
+
+        logic.load(world, pos, nbt);
+        spawner.setChanged();
+        world.sendBlockUpdated(pos, blockstate, blockstate, Block.UPDATE_ALL);
+
+        damageUsedKey(player, world);
+
+        world.levelEvent(LevelEvent.PARTICLES_WAX_OFF, pos, 0);
+        return true;
+    }
+
+    private static void damageUsedKey(ServerPlayer player, ServerLevel world) {
         if (player == null) {
             return;
         }

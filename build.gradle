@@ -37,6 +37,14 @@ base {
     archivesName = mod_id
 }
 
+// GameTests live in their own source set so they are never shipped in the mod jar.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
 // Mojang ships Java 21 to end users in 1.21.1, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
@@ -57,6 +65,13 @@ neoForge {
     runs {
         client {
             client()
+            // Dev client includes the gametest source set for the optional smoke test:
+            // ./gradlew runClient -PsmokeWorld=<save name>
+            sourceSet = sourceSets.gametest
+            if (project.hasProperty('smokeWorld')) {
+                programArguments.addAll '--quickPlaySingleplayer', project.property('smokeWorld').toString()
+                systemProperty 'spawnermod.smoke', 'true'
+            }
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
@@ -72,6 +87,7 @@ neoForge {
         // The gametest system is also enabled by default for other run configs under the /test command.
         gameTestServer {
             type = "gameTestServer"
+            sourceSet = sourceSets.gametest
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -106,6 +122,7 @@ neoForge {
         // multi mod projects should define one per mod
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            sourceSet(sourceSets.gametest)
         }
     }
 }
@@ -116,7 +133,10 @@ neoForge {
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    gametestCompileOnly.extendsFrom compileOnly
 }
+
+neoForge.addModdingDependenciesTo(sourceSets.gametest)
 
 dependencies {
     // Optional. Not bundled and not required at runtime.
