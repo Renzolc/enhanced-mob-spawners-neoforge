@@ -134,6 +134,7 @@ neoForge {
 configurations {
     runtimeClasspath.extendsFrom localRuntime
     gametestCompileOnly.extendsFrom compileOnly
+    gametestRuntimeClasspath.extendsFrom localRuntime
 }
 
 neoForge.addModdingDependenciesTo(sourceSets.gametest)
@@ -141,6 +142,10 @@ neoForge.addModdingDependenciesTo(sourceSets.gametest)
 dependencies {
     // Optional. Not bundled and not required at runtime.
     compileOnly "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"
+    // Dev runs with Curios installed: ./gradlew runGameTestServer -PwithCurios
+    if (project.hasProperty('withCurios')) {
+        localRuntime "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1"
+    }
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

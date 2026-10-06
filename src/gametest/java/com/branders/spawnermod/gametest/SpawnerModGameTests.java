@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.branders.spawnermod.SpawnerMod;
+import com.branders.spawnermod.compat.WornSpawnerItems;
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.enchantment.ModEnchantments;
 import com.branders.spawnermod.networking.SpawnerModNetworking;
@@ -22,9 +23,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.InclusiveRange;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.ItemStack;
@@ -40,6 +41,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -87,21 +89,19 @@ public class SpawnerModGameTests {
     }
 
     /**
-     * Joins vanilla's mock server player. The mock connection has no mod channels, so the
-     * config sync sent from our login listener throws after the player is already placed;
-     * that is expected here and the placed player is looked up instead.
+     * A fake player placed in the level so {@code BaseSpawner#isNearPlayer} sees it. It has no
+     * network connection, so nothing is sent to it, and no login events fire.
      */
-    @SuppressWarnings("removal")
-    private static ServerPlayer joinMockPlayer(GameTestHelper helper) {
-        try {
-            return helper.makeMockServerPlayerInLevel();
-        } catch (UnsupportedOperationException expected) {
-            ServerPlayer placed = helper.getLevel().getServer().getPlayerList().getPlayerByName("test-mock-player");
-            if (placed == null) {
-                throw expected;
-            }
-            return placed;
-        }
+    private static FakePlayer addWatcher(GameTestHelper helper, BlockPos absolutePos) {
+        ServerLevel level = helper.getLevel();
+        FakePlayer watcher = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "ems_watcher"));
+        watcher.moveTo(absolutePos.getX() + 0.5D, absolutePos.getY() + 2.0D, absolutePos.getZ() + 0.5D);
+        level.addNewPlayer(watcher);
+        return watcher;
+    }
+
+    private static void removeWatcher(GameTestHelper helper, FakePlayer watcher) {
+        helper.getLevel().removePlayerImmediately(watcher, Entity.RemovalReason.DISCARDED);
     }
 
     private static void assertShort(GameTestHelper helper, CompoundTag nbt, String key, int expected) {
@@ -235,11 +235,8 @@ public class SpawnerModGameTests {
         SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
         BlockPos pos = helper.absolutePos(SPAWNER);
 
-        // A real player is needed for BaseSpawner#isNearPlayer. Joining reloads the config,
-        // so the config is changed only after the join.
-        ServerPlayer watcher = joinMockPlayer(helper);
-        // Teleport through the connection so the pending-teleport resend keeps the player here.
-        watcher.connection.teleport(pos.getX() + 0.5D, pos.getY() + 2.0D, pos.getZ() + 0.5D, 0.0F, 0.0F);
+        // A player in the level is needed for BaseSpawner#isNearPlayer.
+        FakePlayer watcher = addWatcher(helper, pos);
 
         int oldEnabled = ConfigValues.get("limited_spawns_enabled");
         int oldAmount = ConfigValues.get("limited_spawns_amount");
@@ -270,7 +267,7 @@ public class SpawnerModGameTests {
             CompoundTag after = spawnerNbt(spawner);
             int pigs = level.getEntitiesOfClass(Pig.class, new AABB(pos).inflate(6.0D)).size();
             BlockPos watcherPos = watcher.blockPosition();
-            level.getServer().getPlayerList().remove(watcher);
+            removeWatcher(helper, watcher);
             ConfigValues.put("limited_spawns_enabled", oldEnabled);
             ConfigValues.put("limited_spawns_amount", oldAmount);
 
@@ -281,6 +278,30 @@ public class SpawnerModGameTests {
             helper.assertTrue(pigs == 2, "expected 2 spawned pigs but found " + pigs);
             helper.succeed();
         });
+    }
+
+    /**
+     * With Curios installed, a key or compass on the belt works without holding it.
+     * Run with {@code ./gradlew runGameTestServer -PwithCurios}; without Curios this test only
+     * checks that the mod reports no belt items.
+     */
+    @GameTest(template = EMPTY, batch = "spawnermod_curios")
+    public static void curiosBeltSlot(GameTestHelper helper) {
+        placeSpawner(helper, EntityType.PIG);
+        BlockPos pos = helper.absolutePos(SPAWNER);
+        FakePlayer player = fakePlayer(helper, "curios");
+        try {
+            if (ModList.get().isLoaded("curios")) {
+                CuriosBeltChecks.run(helper, player, pos);
+                SpawnerMod.LOGGER.info("curiosBeltSlot: checked with Curios loaded");
+            } else {
+                helper.assertFalse(WornSpawnerItems.hasBeltKey(player), "belt key reported without Curios");
+                SpawnerMod.LOGGER.info("curiosBeltSlot: Curios not loaded, belt checks skipped");
+            }
+        } finally {
+            player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        }
+        helper.succeed();
     }
 
     /** The compass ignore toggle is saved with the spawner and read back on load. */
