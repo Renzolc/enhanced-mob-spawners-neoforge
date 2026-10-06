@@ -304,6 +304,25 @@ public class SpawnerModGameTests {
         helper.succeed();
     }
 
+    /** A redstone signal next to a spawner switches it off; removing the signal switches it back on. */
+    @GameTest(template = EMPTY)
+    public static void redstoneTogglesSpawner(GameTestHelper helper) {
+        SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
+        int range = spawnerNbt(spawner).getShort("RequiredPlayerRange");
+        helper.assertTrue(range > 4, "unexpected default range " + range);
+
+        helper.setBlock(SPAWNER.east(), Blocks.REDSTONE_BLOCK);
+        CompoundTag powered = spawnerNbt(spawner);
+        assertShort(helper, powered, "RequiredPlayerRange", 0);
+        assertShort(helper, powered, "SpawnRange", range);
+
+        helper.setBlock(SPAWNER.east(), Blocks.AIR);
+        CompoundTag unpowered = spawnerNbt(spawner);
+        assertShort(helper, unpowered, "RequiredPlayerRange", range);
+        assertShort(helper, unpowered, "SpawnRange", 4);
+        helper.succeed();
+    }
+
     /** The compass ignore toggle is saved with the spawner and read back on load. */
     @GameTest(template = EMPTY)
     public static void compassFlagSurvivesSaveAndLoad(GameTestHelper helper) {
