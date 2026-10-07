@@ -38,7 +38,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 /**
  * Handles events regarding the mob spawner.
@@ -52,7 +52,7 @@ public class EventHandler {
      * monster egg; otherwise drop EXP.
      */
     @SubscribeEvent
-    public void onBlockBreak(BlockEvent.BreakEvent event) {
+    public void onBlockBreak(BreakBlockEvent event) {
         Level world = event.getPlayer().level();
         if (world.isClientSide())
             return;
@@ -71,7 +71,7 @@ public class EventHandler {
             if (ConfigValues.get("disable_egg_removal_from_spawner") == 0)
                 dropMonsterEgg(pos, world);
         } else {
-            int size = 15 + world.random.nextInt(15) + world.random.nextInt(15);
+            int size = 15 + world.getRandom().nextInt(15) + world.getRandom().nextInt(15);
             ExperienceOrb.award((ServerLevel) world, Vec3.atCenterOf(pos), size);
         }
     }
@@ -151,7 +151,7 @@ public class EventHandler {
         entityItem.setDefaultPickUpDelay();
         world.addFreshEntity(entityItem);
 
-        logic.setEntityId(EntityType.AREA_EFFECT_CLOUD, world, world.random, pos);
+        logic.setEntityId(EntityType.AREA_EFFECT_CLOUD, world, world.getRandom(), pos);
         spawner.setChanged();
         world.sendBlockUpdated(pos, blockstate, blockstate, 3);
 

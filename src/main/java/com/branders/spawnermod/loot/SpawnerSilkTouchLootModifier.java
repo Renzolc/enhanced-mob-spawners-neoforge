@@ -21,8 +21,8 @@ public class SpawnerSilkTouchLootModifier extends LootModifier {
     public static final MapCodec<SpawnerSilkTouchLootModifier> CODEC = RecordCodecBuilder.mapCodec(inst ->
             LootModifier.codecStart(inst).apply(inst, SpawnerSilkTouchLootModifier::new));
 
-    public SpawnerSilkTouchLootModifier(LootItemCondition[] conditionsIn) {
-        super(conditionsIn);
+    public SpawnerSilkTouchLootModifier(LootItemCondition[] conditionsIn, int priority) {
+        super(conditionsIn, priority);
     }
 
     @Override

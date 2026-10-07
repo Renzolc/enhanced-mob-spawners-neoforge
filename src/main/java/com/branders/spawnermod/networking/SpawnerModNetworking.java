@@ -65,12 +65,12 @@ public class SpawnerModNetworking {
             }
 
             SyncSpawnerTrackingPacket sync = new SyncSpawnerTrackingPacket(pos, payload.tracking());
-            PacketDistributor.sendToPlayersTrackingChunk(world, new ChunkPos(pos), sync);
+            PacketDistributor.sendToPlayersTrackingChunk(world, ChunkPos.containing(pos), sync);
             PacketDistributor.sendToPlayer(player, sync);
 
-            player.displayClientMessage(Component.translatable(payload.tracking()
+            player.sendOverlayMessage(Component.translatable(payload.tracking()
                     ? "message.spawnermod.compass_tracking.on"
-                    : "message.spawnermod.compass_tracking.off"), true);
+                    : "message.spawnermod.compass_tracking.off"));
         });
     }
 

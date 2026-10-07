@@ -7,7 +7,7 @@ import com.branders.spawnermod.networking.packet.UpdateSpawnerTrackingPacket;
 import com.branders.spawnermod.spawner.CompassTrackingAccess;
 import com.branders.spawnermod.spawner.SpawnerNbt;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -262,19 +262,19 @@ public class SpawnerConfigGui extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(graphics, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTick);
 
         graphics.blit(RenderPipelines.GUI_TEXTURED, SPAWNER_CONFIG_TEXTURE, width / 2 - SPAWNER_CONFIG_TEXTURE_WIDTH / 2, 5, 0, 0,
                 SPAWNER_CONFIG_TEXTURE_WIDTH, SPAWNER_CONFIG_TEXTURE_HEIGHT, SPAWNER_CONFIG_TEXTURE_WIDTH,
                 SPAWNER_CONFIG_TEXTURE_HEIGHT);
 
         int length = TITLE_TEXT.getString().length() * 2;
-        graphics.drawString(font, TITLE_TEXT, width / 2 - length - 3, 33, 0xFFFFD964);
+        graphics.text(font, TITLE_TEXT, width / 2 - length - 3, 33, 0xFFFFD964);
 
         if (limitedSpawns) {
             graphics.blit(RenderPipelines.GUI_TEXTURED, SPAWNS_ICON_TEXTURE, width / 2 - 7 + 101, 23, 0, 0, 14, 14, 14, 14);
-            graphics.drawString(font,
+            graphics.text(font,
                     Component.literal("" + (ConfigValues.get("limited_spawns_amount") - spawns)), width / 2 + 114, 27,
                     0xFFFFFFFF);
         }

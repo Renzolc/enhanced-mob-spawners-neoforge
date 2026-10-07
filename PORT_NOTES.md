@@ -114,3 +114,20 @@ StreamCodec.composite is limited to 6 fields; packets with more use `StreamCodec
   `#minecraft:swords` directly. `#minecraft:enchantable/sharp_weapon` now also covers spears, so
   Spawn Harvest can go on spears too.
 - `Pig` moved to `net.minecraft.world.entity.animal.pig` (GameTests only).
+
+## Port to Minecraft 26.1.2 (NeoForge 26.1.2.114, branch `mc/26.1.2`)
+- Java 25 toolchain (Minecraft 26.1 requires Java 25). ModDevGradle 2.0.148.
+- Minecraft 26.1 ships unobfuscated, so the Parchment block and properties are gone. The data
+  run uses `clientData()`, as in the NeoForge 26.1 MDK.
+- `GuiGraphics` is `GuiGraphicsExtractor`: `Screen#renderBackground` is `extractBackground` and
+  `drawString` is `text`. HUD layers take the extractor as well.
+- `BlockEvent.BreakEvent` is `net.neoforged.neoforge.event.level.block.BreakBlockEvent`.
+- Global loot modifiers: every file in `data/<namespace>/loot_modifiers/` is now loaded as a
+  modifier, so `data/neoforge/loot_modifiers/global_loot_modifiers.json` was removed. The
+  `LootModifier` constructor takes a priority.
+- `DeferredRegister.Items#registerItem` takes a `UnaryOperator<Item.Properties>` (or a supplier)
+  instead of a ready `Item.Properties`.
+- `Level#random` is private (`getRandom()`), `new ChunkPos(BlockPos)` is `ChunkPos.containing`, and
+  `Player#displayClientMessage(msg, true)` is `sendOverlayMessage(msg)`.
+- `TestEnvironmentDefinition` is generic (`TestEnvironmentDefinition<?>`) in the GameTest
+  registration.

@@ -4,7 +4,7 @@ import com.branders.spawnermod.compat.WornSpawnerItems;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
@@ -19,7 +19,7 @@ public final class SpawnerCompassHud {
     private SpawnerCompassHud() {
     }
 
-    public static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+    public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.level == null || minecraft.options.hideGui) {
             return;
@@ -38,6 +38,6 @@ public final class SpawnerCompassHud {
         int blocks = (int) Math.round(distance);
         Component text = Component.translatable("hud.spawnermod.spawner_nearby", blocks);
         int x = (graphics.guiWidth() - minecraft.font.width(text)) / 2;
-        graphics.drawString(minecraft.font, text, x, 8, 0xFFFFFFFF, true);
+        graphics.text(minecraft.font, text, x, 8, 0xFFFFFFFF, true);
     }
 }

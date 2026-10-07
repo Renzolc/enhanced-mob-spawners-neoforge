@@ -76,9 +76,9 @@ public final class SpawnerModGameTestRegistration {
         if (!ServerModLoader.isGameTestServer()) {
             return;
         }
-        Map<String, Holder<TestEnvironmentDefinition>> environments = new LinkedHashMap<>();
+        Map<String, Holder<TestEnvironmentDefinition<?>>> environments = new LinkedHashMap<>();
         TESTS.forEach((name, test) -> {
-            Holder<TestEnvironmentDefinition> env = environments.computeIfAbsent(test.env(),
+            Holder<TestEnvironmentDefinition<?>> env = environments.computeIfAbsent(test.env(),
                     e -> event.registerEnvironment(id(e)));
             event.registerTest(id(name), new FunctionGameTestInstance(
                     ResourceKey.create(Registries.TEST_FUNCTION, id(name)),
