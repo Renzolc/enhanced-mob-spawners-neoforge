@@ -12,7 +12,7 @@ import com.branders.spawnermod.spawner.SpawnerNbt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -135,7 +135,7 @@ public class EventHandler {
             return InteractionResult.PASS;
 
         String eggId = ModRegistry.getSpawnEggRegistryName(entityString);
-        Item egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(eggId));
+        Item egg = BuiltInRegistries.ITEM.getValue(Identifier.parse(eggId));
         if (egg == null || egg == Items.AIR) {
             SpawnerMod.LOGGER.info("Could not find spawn egg for: " + entityString);
             return InteractionResult.PASS;
@@ -159,14 +159,14 @@ public class EventHandler {
     }
 
     public static Item getSpawnEgg(String entityString) {
-        Item egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(entityString + "_spawn_egg"));
+        Item egg = BuiltInRegistries.ITEM.getValue(Identifier.parse(entityString + "_spawn_egg"));
 
         if (egg == Items.AIR) {
             String[] split = entityString.split(":");
             assert (split.length == 2);
             String id = split[0];
             String e = "spawn_egg_" + split[1];
-            egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(id + ":" + e));
+            egg = BuiltInRegistries.ITEM.getValue(Identifier.parse(id + ":" + e));
         }
 
         return egg;

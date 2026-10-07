@@ -3,7 +3,7 @@ package com.branders.spawnermod;
 import com.branders.spawnermod.client.SpawnerCompassAngle;
 import com.branders.spawnermod.client.SpawnerCompassHud;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
@@ -25,12 +25,12 @@ public final class SpawnerModClient {
     }
 
     private static void onRegisterGuiLayers(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID, "spawner_compass_hud"),
+        event.registerAboveAll(Identifier.fromNamespaceAndPath(SpawnerMod.MOD_ID, "spawner_compass_hud"),
                 SpawnerCompassHud::render);
     }
 
     private static void onRegisterItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
-        event.register(ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID, "spawner_compass"),
+        event.register(Identifier.fromNamespaceAndPath(SpawnerMod.MOD_ID, "spawner_compass"),
                 SpawnerCompassAngle.MAP_CODEC);
     }
 }

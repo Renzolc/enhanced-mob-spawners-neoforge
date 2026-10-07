@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BaseSpawner;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
@@ -45,9 +45,9 @@ public class SpawnerConfigGui extends Screen {
 
     private static final Component TITLE_TEXT = Component.translatable("gui.spawnermod.spawner_config_screen_title");
 
-    private static final ResourceLocation SPAWNER_CONFIG_TEXTURE = ResourceLocation.fromNamespaceAndPath(
+    private static final Identifier SPAWNER_CONFIG_TEXTURE = Identifier.fromNamespaceAndPath(
             SpawnerMod.MOD_ID, "textures/gui/spawner_config_screen.png");
-    private static final ResourceLocation SPAWNS_ICON_TEXTURE = ResourceLocation.fromNamespaceAndPath(
+    private static final Identifier SPAWNS_ICON_TEXTURE = Identifier.fromNamespaceAndPath(
             SpawnerMod.MOD_ID, "textures/gui/spawner_config_screen_icon_spawns.png");
     private static final int SPAWNER_CONFIG_TEXTURE_WIDTH = 178;
     private static final int SPAWNER_CONFIG_TEXTURE_HEIGHT = 177;

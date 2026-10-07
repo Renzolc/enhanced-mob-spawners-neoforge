@@ -6,7 +6,7 @@ import com.branders.spawnermod.item.SpawnerCompassItem;
 import com.branders.spawnermod.item.SpawnerKey;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -51,7 +51,7 @@ public class ModRegistry {
      * @return modid:entity_spawn_egg or whackmod:spawn_egg_entity
      */
     public static String getSpawnEggRegistryName(String entityString) {
-        Item egg = BuiltInRegistries.ITEM.getValue(ResourceLocation.parse(entityString + "_spawn_egg"));
+        Item egg = BuiltInRegistries.ITEM.getValue(Identifier.parse(entityString + "_spawn_egg"));
 
         if (egg == null || egg == net.minecraft.world.item.Items.AIR) {
             String[] split = entityString.split(":");

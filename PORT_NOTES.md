@@ -105,3 +105,12 @@ StreamCodec.composite is limited to 6 fields; packets with more use `StreamCodec
   `FMLEnvironment.dist` is `FMLEnvironment.getDist()`.
 - `GameTestHooks#isGametestServer` is gone; the GameTest registration checks
   `ServerModLoader#isGameTestServer`.
+
+## Port to Minecraft 1.21.11 (NeoForge 21.11.45, branch `mc/1.21.11`)
+- `ResourceLocation` is renamed to `Identifier` (`net.minecraft.resources.Identifier`).
+- Command permission levels are gone: `/ems` value arguments use
+  `Commands.hasPermission(Commands.LEVEL_GAMEMASTERS)` instead of `hasPermission(2)`.
+- The `#minecraft:enchantable/sword` item tag was removed, so the Spawn Harvest item tag lists
+  `#minecraft:swords` directly. `#minecraft:enchantable/sharp_weapon` now also covers spears, so
+  Spawn Harvest can go on spears too.
+- `Pig` moved to `net.minecraft.world.entity.animal.pig` (GameTests only).

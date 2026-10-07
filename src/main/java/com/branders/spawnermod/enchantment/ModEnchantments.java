@@ -4,7 +4,7 @@ import com.branders.spawnermod.SpawnerMod;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 /**
@@ -20,6 +20,6 @@ public final class ModEnchantments {
 
     private static ResourceKey<Enchantment> key(String name) {
         return ResourceKey.create(Registries.ENCHANTMENT,
-                ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID, name));
+                Identifier.fromNamespaceAndPath(SpawnerMod.MOD_ID, name));
     }
 }

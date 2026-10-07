@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#minecraft:enchantable/sword",
+    "#minecraft:swords",
     "#minecraft:enchantable/sharp_weapon",
     "#minecraft:enchantable/bow",
     "#minecraft:enchantable/crossbow",

@@ -13,7 +13,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestData;
 import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
@@ -29,7 +29,7 @@ import net.neoforged.neoforge.server.loading.ServerModLoader;
 @EventBusSubscriber(modid = SpawnerMod.MOD_ID)
 public final class SpawnerModGameTestRegistration {
 
-    private static final ResourceLocation STRUCTURE = id("empty");
+    private static final Identifier STRUCTURE = id("empty");
     private static final int DEFAULT_TICKS = 100;
 
     private record Test(String env, int maxTicks, Consumer<GameTestHelper> body) {
@@ -59,8 +59,8 @@ public final class SpawnerModGameTestRegistration {
     private SpawnerModGameTestRegistration() {
     }
 
-    private static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID, path);
+    private static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(SpawnerMod.MOD_ID, path);
     }
 
     @SubscribeEvent

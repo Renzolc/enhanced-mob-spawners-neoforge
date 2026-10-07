@@ -2,7 +2,7 @@ package com.branders.spawnermod.compat;
 
 import com.branders.spawnermod.SpawnerMod;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 public final class CuriosBeltSlots {
 
     static final String BELT = "belt";
-    private static final ResourceLocation MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID,
+    private static final Identifier MODIFIER_ID = Identifier.fromNamespaceAndPath(SpawnerMod.MOD_ID,
             "belt_shortfall");
 
     private CuriosBeltSlots() {

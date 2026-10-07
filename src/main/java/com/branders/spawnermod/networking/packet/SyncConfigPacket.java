@@ -5,13 +5,13 @@ import com.branders.spawnermod.SpawnerMod;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record SyncConfigPacket(int config, int count, int range, int speed, int limitedSpawns, int limitedSpawnsAmount,
         int isCustomRange, int customRange) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SyncConfigPacket> TYPE = new CustomPacketPayload.Type<>(
-            ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID, "packet.sync_config_message"));
+            Identifier.fromNamespaceAndPath(SpawnerMod.MOD_ID, "packet.sync_config_message"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncConfigPacket> STREAM_CODEC = StreamCodec.of(
             SyncConfigPacket::encode, SyncConfigPacket::decode);

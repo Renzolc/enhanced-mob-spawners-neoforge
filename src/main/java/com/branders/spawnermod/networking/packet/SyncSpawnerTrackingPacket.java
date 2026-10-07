@@ -6,13 +6,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** Server to client: a spawner's compass-tracking flag changed. */
 public record SyncSpawnerTrackingPacket(BlockPos pos, boolean tracking) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<SyncSpawnerTrackingPacket> TYPE = new CustomPacketPayload.Type<>(
-            ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID, "packet.sync_spawner_tracking"));
+            Identifier.fromNamespaceAndPath(SpawnerMod.MOD_ID, "packet.sync_spawner_tracking"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncSpawnerTrackingPacket> STREAM_CODEC = StreamCodec.of(
             SyncSpawnerTrackingPacket::encode, SyncSpawnerTrackingPacket::decode);

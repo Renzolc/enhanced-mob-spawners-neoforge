@@ -61,7 +61,7 @@ public class SpawnerModCommands {
             ctx.getSource().sendSuccess(
                     () -> Component.literal("[EMS]: %s is currently set to %s".formatted(name, value)), false);
             return 1;
-        }).then(argument("value", type).requires(source -> source.hasPermission(2)).executes(ctx -> {
+        }).then(argument("value", type).requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS)).executes(ctx -> {
             final int value = IntegerArgumentType.getInteger(ctx, "value");
             ConfigValues.put(name, value);
             ctx.getSource().sendSuccess(
