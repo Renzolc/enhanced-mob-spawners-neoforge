@@ -7,8 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Top-center HUD while a spawner compass is in the hotbar or on the belt.
@@ -16,7 +14,6 @@ import net.neoforged.api.distmarker.OnlyIn;
  * rounded to the nearest integer. The search itself stays the 128-block
  * horizontal scan.
  */
-@OnlyIn(Dist.CLIENT)
 public final class SpawnerCompassHud {
 
     private SpawnerCompassHud() {
@@ -41,6 +38,6 @@ public final class SpawnerCompassHud {
         int blocks = (int) Math.round(distance);
         Component text = Component.translatable("hud.spawnermod.spawner_nearby", blocks);
         int x = (graphics.guiWidth() - minecraft.font.width(text)) / 2;
-        graphics.drawString(minecraft.font, text, x, 8, 0xFFFFFF, true);
+        graphics.drawString(minecraft.font, text, x, 8, 0xFFFFFFFF, true);
     }
 }

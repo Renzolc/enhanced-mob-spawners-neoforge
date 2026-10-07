@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.spawner.SpawnerNbt;
@@ -16,6 +15,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 @Mixin(BaseSpawner.class)
 public class LimitedSpawnsMixin {
@@ -37,7 +38,7 @@ public class LimitedSpawnsMixin {
     }
 
     /** Before each spawn attempt: switch the spawner off once the limit is reached. */
-    @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/EntityType;by(Lnet/minecraft/nbt/CompoundTag;)Ljava/util/Optional;"), method = "serverTick", cancellable = true)
+    @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/entity/EntityType;by(Lnet/minecraft/world/level/storage/ValueInput;)Ljava/util/Optional;"), method = "serverTick", cancellable = true)
     public void cancel(ServerLevel world, BlockPos pos, CallbackInfo ci) {
         if (ConfigValues.get("limited_spawns_enabled") == 0)
             return;
@@ -56,16 +57,16 @@ public class LimitedSpawnsMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "load")
-    private void readNbt(Level world, BlockPos pos, CompoundTag nbt, CallbackInfo info) {
+    private void readNbt(Level world, BlockPos pos, ValueInput input, CallbackInfo info) {
         if (ConfigValues.get("limited_spawns_enabled") == 0)
             return;
-        spawns = SpawnerNbt.getShort(nbt, "spawns");
+        spawns = (short) input.getShortOr("spawns", (short) 0);
     }
 
     @Inject(at = @At("RETURN"), method = "save")
-    private void writeNbt(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> info) {
+    private void writeNbt(ValueOutput output, CallbackInfo info) {
         if (ConfigValues.get("limited_spawns_enabled") == 0)
             return;
-        info.getReturnValue().putShort("spawns", spawns);
+        output.putShort("spawns", spawns);
     }
 }

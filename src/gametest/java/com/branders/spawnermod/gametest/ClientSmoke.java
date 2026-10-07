@@ -83,7 +83,7 @@ public final class ClientSmoke {
     }
 
     private static void screenshot(Minecraft mc, String name) {
-        Screenshot.grab(mc.gameDirectory, name, mc.getMainRenderTarget(),
+        Screenshot.grab(mc.gameDirectory, name, mc.getMainRenderTarget(), 1,
                 message -> SpawnerMod.LOGGER.info("EMS_SMOKE screenshot {}", message.getString()));
     }
 }

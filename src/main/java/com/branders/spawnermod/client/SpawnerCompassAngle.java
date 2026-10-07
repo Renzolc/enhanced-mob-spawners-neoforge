@@ -15,14 +15,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Item model property {@code spawnermod:spawner_compass}: the needle angle (0..1) towards the
  * nearest tracked spawner, using the same wobble and spin as the vanilla compass.
  */
-@OnlyIn(Dist.CLIENT)
 public final class SpawnerCompassAngle implements RangeSelectItemModelProperty {
 
     public static final MapCodec<SpawnerCompassAngle> MAP_CODEC = Codec.BOOL.optionalFieldOf("wobble", true)

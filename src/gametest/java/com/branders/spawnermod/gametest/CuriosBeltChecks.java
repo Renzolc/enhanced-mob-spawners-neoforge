@@ -24,6 +24,11 @@ final class CuriosBeltChecks {
     static void run(GameTestHelper helper, ServerPlayer player, BlockPos spawnerPos) {
         var inventory = CuriosApi.getCuriosInventory(player).orElse(null);
         Check.isTrue(helper, inventory != null, "player has no Curios inventory");
+        // Curios 12+ fills a player's slots when the player joins the level. Fake players never
+        // join, so load the slot configuration here.
+        if (inventory.getStacksHandler("belt").isEmpty()) {
+            inventory.loadDatapacks();
+        }
         var belt = inventory.getStacksHandler("belt").orElse(null);
         Check.isTrue(helper, belt != null, "player has no Curios belt slot");
         IDynamicStackHandler stacks = belt.getStacks();
@@ -39,7 +44,7 @@ final class CuriosBeltChecks {
         Check.isTrue(helper, WornSpawnerItems.hasBeltKey(player), "belt key not found");
         Check.isTrue(helper, player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty(),
                 "hands are not empty");
-        Check.isTrue(helper, SpawnerModNetworking.applySpawnerSettings(player.serverLevel(),
+        Check.isTrue(helper, SpawnerModNetworking.applySpawnerSettings(player.level(),
                 new SyncSpawnerPacket(spawnerPos, 20, 4, 32, 6, 200, 800), player), "settings not applied");
         ItemStack key = stacks.getStackInSlot(0);
         Check.isTrue(helper, key.is(ModRegistry.SPAWNER_KEY.get()), "belt key disappeared");

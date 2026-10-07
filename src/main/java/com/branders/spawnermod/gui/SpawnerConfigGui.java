@@ -10,22 +10,19 @@ import com.branders.spawnermod.spawner.SpawnerNbt;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BaseSpawner;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
  * Spawner GUI config screen.
  *
  * @author Anders &lt;Branders&gt; Blomqvist
  */
-@OnlyIn(Dist.CLIENT)
 public class SpawnerConfigGui extends Screen {
 
     private static class Data {
@@ -249,7 +246,7 @@ public class SpawnerConfigGui extends Screen {
                     compassTracking = !compassTracking;
                     button.setMessage(Component.translatable(
                             "button.compass_tracking." + (compassTracking ? "on" : "off")));
-                    PacketDistributor.sendToServer(new UpdateSpawnerTrackingPacket(pos, compassTracking));
+                    ClientPacketDistributor.sendToServer(new UpdateSpawnerTrackingPacket(pos, compassTracking));
                 }).bounds(width / 2 - 89, 155, 178, 20).build());
 
         addRenderableWidget(Button.builder(Component.translatable("button.save"), button -> {
@@ -268,18 +265,18 @@ public class SpawnerConfigGui extends Screen {
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
 
-        graphics.blit(RenderType::guiTextured, SPAWNER_CONFIG_TEXTURE, width / 2 - SPAWNER_CONFIG_TEXTURE_WIDTH / 2, 5, 0, 0,
+        graphics.blit(RenderPipelines.GUI_TEXTURED, SPAWNER_CONFIG_TEXTURE, width / 2 - SPAWNER_CONFIG_TEXTURE_WIDTH / 2, 5, 0, 0,
                 SPAWNER_CONFIG_TEXTURE_WIDTH, SPAWNER_CONFIG_TEXTURE_HEIGHT, SPAWNER_CONFIG_TEXTURE_WIDTH,
                 SPAWNER_CONFIG_TEXTURE_HEIGHT);
 
         int length = TITLE_TEXT.getString().length() * 2;
-        graphics.drawString(font, TITLE_TEXT, width / 2 - length - 3, 33, 0xFFD964);
+        graphics.drawString(font, TITLE_TEXT, width / 2 - length - 3, 33, 0xFFFFD964);
 
         if (limitedSpawns) {
-            graphics.blit(RenderType::guiTextured, SPAWNS_ICON_TEXTURE, width / 2 - 7 + 101, 23, 0, 0, 14, 14, 14, 14);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, SPAWNS_ICON_TEXTURE, width / 2 - 7 + 101, 23, 0, 0, 14, 14, 14, 14);
             graphics.drawString(font,
                     Component.literal("" + (ConfigValues.get("limited_spawns_amount") - spawns)), width / 2 + 114, 27,
-                    0xFFFFFF);
+                    0xFFFFFFFF);
         }
     }
 
@@ -287,7 +284,7 @@ public class SpawnerConfigGui extends Screen {
         if (cachedDisabled && disabled)
             return;
 
-        PacketDistributor.sendToServer(new SyncSpawnerPacket(pos, delay, spawnCount, requiredPlayerRange,
+        ClientPacketDistributor.sendToServer(new SyncSpawnerPacket(pos, delay, spawnCount, requiredPlayerRange,
                 maxNearbyEntities, minSpawnDelay, maxSpawnDelay));
     }
 

@@ -82,3 +82,18 @@ StreamCodec.composite is limited to 6 fields; packets with more use `StreamCodec
   they run in separate batches. Tests are only registered in the GameTest server (NeoForge fires
   the event after the registries are frozen on a dev dedicated server).
 - `Entity#moveTo` is `snapTo`; `GameTestHelper#assertTrue` takes a `Component`.
+
+## Port to Minecraft 1.21.8 (NeoForge 21.8.54, branch `mc/1.21.8`)
+- `BaseSpawner#load`/`save` take `ValueInput`/`ValueOutput` (1.21.6). `SpawnerNbt` wraps them with
+  `TagValueOutput`/`TagValueInput`, so the rest of the code still edits a plain `CompoundTag`. The
+  limited-spawns, range and compass-tracking mixins read from the `ValueInput` at `HEAD`/`RETURN` of
+  `load` and write into the `ValueOutput` at `RETURN` of `save`. The spawn-limit check now targets
+  `EntityType#by(ValueInput)`.
+- NeoForge 21.6+ no longer strips `@OnlyIn` members. The annotations are gone and the screen opening
+  moved to the client-only `client/SpawnerKeyScreen`, so `SpawnerKey` loads on a dedicated server.
+- GUI rendering: `GuiGraphics#blit` takes `RenderPipelines.GUI_TEXTURED`, and text colours need an
+  alpha channel (`0xFFFFFFFF`); text with alpha 0 is no longer drawn.
+- Client to server packets use `ClientPacketDistributor.sendToServer`.
+- `ServerPlayer#serverLevel()` is `level()`.
+- Curios 12 fills a player's slots when the player joins the level, so the Curios GameTest calls
+  `ICuriosItemHandler#loadDatapacks` for its fake player.

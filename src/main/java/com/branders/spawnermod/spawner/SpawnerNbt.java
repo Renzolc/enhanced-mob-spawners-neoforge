@@ -1,15 +1,22 @@
 package com.branders.spawnermod.spawner;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 
 /**
  * Reads and writes the spawner settings ({@code Delay}, {@code SpawnCount}, {@code SpawnData}
  * and so on) as one compound tag. All spawner edits go through here so version differences in
  * {@link BaseSpawner#save}/{@link BaseSpawner#load} and in {@link CompoundTag} getters stay in
  * one place.
+ *
+ * <p>Since 1.21.6 {@link BaseSpawner} reads and writes through {@code ValueInput}/{@code ValueOutput};
+ * the tag based {@code TagValueInput}/{@code TagValueOutput} wrap a plain {@link CompoundTag}.
  */
 public final class SpawnerNbt {
 
@@ -17,11 +24,14 @@ public final class SpawnerNbt {
     }
 
     public static CompoundTag save(BaseSpawner logic) {
-        return logic.save(new CompoundTag());
+        TagValueOutput output = TagValueOutput.createWithoutContext(ProblemReporter.DISCARDING);
+        logic.save(output);
+        return output.buildResult();
     }
 
     public static void load(BaseSpawner logic, Level level, BlockPos pos, CompoundTag tag) {
-        logic.load(level, pos, tag);
+        RegistryAccess registries = level != null ? level.registryAccess() : RegistryAccess.EMPTY;
+        logic.load(level, pos, TagValueInput.create(ProblemReporter.DISCARDING, registries, tag));
     }
 
     public static short getShort(CompoundTag tag, String key) {

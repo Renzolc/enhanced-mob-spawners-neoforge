@@ -14,6 +14,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 @Mixin(BaseSpawner.class)
 public class SpawnerRangeMixin {
@@ -38,16 +40,16 @@ public class SpawnerRangeMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "load")
-    private void readNbt(Level world, BlockPos pos, CompoundTag nbt, CallbackInfo info) {
+    private void readNbt(Level world, BlockPos pos, ValueInput input, CallbackInfo info) {
         if (ConfigValues.get("default_spawner_range_enabled") == 0)
             return;
-        rangeSet = SpawnerNbt.getBoolean(nbt, "RangeSet", false);
+        rangeSet = input.getBooleanOr("RangeSet", false);
     }
 
     @Inject(at = @At("RETURN"), method = "save")
-    private void writeNbt(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> info) {
+    private void writeNbt(ValueOutput output, CallbackInfo info) {
         if (ConfigValues.get("default_spawner_range_enabled") == 0)
             return;
-        info.getReturnValue().putBoolean("RangeSet", rangeSet);
+        output.putBoolean("RangeSet", rangeSet);
     }
 }

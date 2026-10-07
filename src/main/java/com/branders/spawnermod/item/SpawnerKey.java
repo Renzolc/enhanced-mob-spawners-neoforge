@@ -3,9 +3,8 @@ package com.branders.spawnermod.item;
 import java.util.function.Consumer;
 
 import com.branders.spawnermod.config.ConfigValues;
-import com.branders.spawnermod.gui.SpawnerConfigGui;
+import com.branders.spawnermod.client.SpawnerKeyScreen;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -22,8 +21,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.BaseSpawner;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Spawner Key — opens the spawner config GUI. Damageable so Unbreaking /
@@ -92,8 +89,8 @@ public class SpawnerKey extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    /** Client side only. The screen code lives in a client class so this class stays server safe. */
     public static void openScreen(BaseSpawner logic, BlockPos pos) {
-        Minecraft.getInstance().setScreen(new SpawnerConfigGui(Component.translatable(""), logic, pos));
+        SpawnerKeyScreen.open(logic, pos);
     }
 }

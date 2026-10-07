@@ -12,8 +12,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Client target lookup for the spawner compass. The needle angle is computed by
@@ -24,7 +22,6 @@ import net.neoforged.api.distmarker.OnlyIn;
  * belt-slot items with the local player, so a compass worn on the belt keeps
  * pointing and does not have to be in either hand.
  */
-@OnlyIn(Dist.CLIENT)
 public final class SpawnerCompassClient {
 
     /** Horizontal search radius, in blocks. */
