@@ -17,8 +17,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
-import net.neoforged.neoforge.gametest.GameTestHooks;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforge.server.loading.ServerModLoader;
 
 /**
  * Registers the GameTests with the data-driven test system (Minecraft 1.21.5+): each test body is
@@ -73,7 +73,7 @@ public final class SpawnerModGameTestRegistration {
         // The dev runServer/runClient runs also load this source set. NeoForge fires this event on
         // a dedicated server only after the test registries are frozen, so register in the
         // GameTest server only.
-        if (!GameTestHooks.isGametestServer()) {
+        if (!ServerModLoader.isGameTestServer()) {
             return;
         }
         Map<String, Holder<TestEnvironmentDefinition>> environments = new LinkedHashMap<>();

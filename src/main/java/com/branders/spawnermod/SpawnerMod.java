@@ -50,7 +50,7 @@ public class SpawnerMod {
         NeoForge.EVENT_BUS.addListener(this::onPlayerChangeDimension);
         NeoForge.EVENT_BUS.addListener(SpawnerKeyEvents::onRightClickBlock);
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             SpawnerModClient.init(modEventBus);
         }
     }

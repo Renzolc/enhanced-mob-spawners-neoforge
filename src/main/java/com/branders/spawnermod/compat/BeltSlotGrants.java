@@ -30,7 +30,7 @@ public final class BeltSlotGrants {
     }
 
     private static void enqueue(ServerPlayer player, int attempt) {
-        MinecraftServer server = player.getServer();
+        MinecraftServer server = player.level().getServer();
         if (server == null) {
             return;
         }

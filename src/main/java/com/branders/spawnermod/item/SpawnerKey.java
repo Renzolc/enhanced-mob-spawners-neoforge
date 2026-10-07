@@ -73,7 +73,7 @@ public class SpawnerKey extends Item {
 
         Level world = context.getLevel();
 
-        if (!world.isClientSide)
+        if (!world.isClientSide())
             return InteractionResult.FAIL;
 
         BlockPos pos = context.getClickedPos();

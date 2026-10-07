@@ -11,7 +11,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -32,8 +32,8 @@ public final class SpawnerCompassAngle implements RangeSelectItemModelProperty {
     }
 
     @Override
-    public float get(ItemStack stack, ClientLevel level, LivingEntity entity, int seed) {
-        return this.state.get(stack, level, entity, seed);
+    public float get(ItemStack stack, ClientLevel level, ItemOwner owner, int seed) {
+        return this.state.get(stack, level, owner, seed);
     }
 
     @Override
@@ -58,7 +58,13 @@ public final class SpawnerCompassAngle implements RangeSelectItemModelProperty {
         }
 
         @Override
-        protected float calculate(ItemStack stack, ClientLevel level, int seed, Entity entity) {
+        protected float calculate(ItemStack stack, ClientLevel level, int seed, ItemOwner owner) {
+            // Since 1.21.9 the holder is an ItemOwner; held, hotbar and item frame stacks still
+            // have an entity behind it.
+            Entity entity = owner instanceof Entity e ? e : owner != null ? owner.asLivingEntity() : null;
+            if (entity == null) {
+                return this.spinning(seed, level.getGameTime());
+            }
             GlobalPos target = SpawnerCompassClient.target(level, stack, entity);
             long gameTime = level.getGameTime();
             return !isValidTarget(entity, target)

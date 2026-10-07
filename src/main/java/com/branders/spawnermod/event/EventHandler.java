@@ -54,7 +54,7 @@ public class EventHandler {
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event) {
         Level world = event.getPlayer().level();
-        if (world.isClientSide)
+        if (world.isClientSide())
             return;
 
         Player player = event.getPlayer();
@@ -88,7 +88,7 @@ public class EventHandler {
         if (player.isShiftKeyDown() && ModList.get().isLoaded("carrier"))
             return;
 
-        if (world.isClientSide)
+        if (world.isClientSide())
             return;
 
         if (world.getBlockState(event.getPos()).getBlock() != Blocks.SPAWNER)

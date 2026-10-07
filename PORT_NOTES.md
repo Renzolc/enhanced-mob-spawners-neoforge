@@ -97,3 +97,11 @@ StreamCodec.composite is limited to 6 fields; packets with more use `StreamCodec
 - `ServerPlayer#serverLevel()` is `level()`.
 - Curios 12 fills a player's slots when the player joins the level, so the Curios GameTest calls
   `ICuriosItemHandler#loadDatapacks` for its fake player.
+
+## Port to Minecraft 1.21.10 (NeoForge 21.10.64, branch `mc/1.21.10`)
+- Item model properties get an `ItemOwner` instead of a `LivingEntity`. `SpawnerCompassAngle` uses
+  the entity behind the owner (or spins when there is none).
+- `Level#isClientSide` is a method, `Entity#getServer` is gone (`level().getServer()`), and
+  `FMLEnvironment.dist` is `FMLEnvironment.getDist()`.
+- `GameTestHooks#isGametestServer` is gone; the GameTest registration checks
+  `ServerModLoader#isGameTestServer`.
