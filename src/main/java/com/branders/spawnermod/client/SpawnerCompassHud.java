@@ -21,7 +21,7 @@ public final class SpawnerCompassHud {
 
     public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.level == null || minecraft.options.hideGui) {
+        if (minecraft.player == null || minecraft.level == null || minecraft.gui.hud.isHidden()) {
             return;
         }
         if (!WornSpawnerItems.hasActiveCompass(minecraft.player)) {

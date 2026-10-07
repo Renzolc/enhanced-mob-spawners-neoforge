@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
@@ -57,7 +58,7 @@ public final class ClientSmoke {
                 BlockPos pos = player.blockPosition().offset(3, 0, 0);
                 level.setBlockAndUpdate(pos, Blocks.SPAWNER.defaultBlockState());
                 if (level.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
-                    spawner.setEntityId(EntityType.PIG, level.getRandom());
+                    spawner.setEntityId(EntityTypes.PIG, level.getRandom());
                 }
                 player.getInventory().setItem(0, new ItemStack(ModRegistry.SPAWNER_COMPASS.get()));
                 player.getInventory().setItem(1, new ItemStack(ModRegistry.SPAWNER_KEY.get()));
@@ -70,20 +71,20 @@ public final class ClientSmoke {
             BlockPos pos = spawnerPos;
             if (pos != null && mc.level.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
                 SpawnerKey.openScreen(spawner.getSpawner(), pos);
-                SpawnerMod.LOGGER.info("EMS_SMOKE opened screen {}", mc.screen);
+                SpawnerMod.LOGGER.info("EMS_SMOKE opened screen {}", mc.gui.screen());
             } else {
                 SpawnerMod.LOGGER.error("EMS_SMOKE no client spawner at {}", pos);
             }
         } else if (ticks == 160) {
             screenshot(mc, "ems-smoke-gui.png");
         } else if (ticks == 180) {
-            SpawnerMod.LOGGER.info("EMS_SMOKE_DONE screen={}", mc.screen);
+            SpawnerMod.LOGGER.info("EMS_SMOKE_DONE screen={}", mc.gui.screen());
             mc.stop();
         }
     }
 
     private static void screenshot(Minecraft mc, String name) {
-        Screenshot.grab(mc.gameDirectory, name, mc.getMainRenderTarget(), 1,
+        Screenshot.grab(mc.gameDirectory, name, mc.gameRenderer.mainRenderTarget(), 1,
                 message -> SpawnerMod.LOGGER.info("EMS_SMOKE screenshot {}", message.getString()));
     }
 }

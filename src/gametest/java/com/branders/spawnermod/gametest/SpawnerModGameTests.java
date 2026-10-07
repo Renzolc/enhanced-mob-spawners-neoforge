@@ -27,6 +27,7 @@ import net.minecraft.util.InclusiveRange;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -106,7 +107,7 @@ public class SpawnerModGameTests {
     /** Settings sent by the Spawner Key GUI are written to the spawner on the server. */
     public static void keySettingsAppliedServerSide(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
+        SpawnerBlockEntity spawner = placeSpawner(helper, EntityTypes.PIG);
         BlockPos pos = helper.absolutePos(SPAWNER);
         FakePlayer player = fakePlayer(helper, "settings");
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModRegistry.SPAWNER_KEY.get()));
@@ -137,7 +138,7 @@ public class SpawnerModGameTests {
     /** The key has 16 durability and each applied save costs one. */
     public static void keyDurability16To15(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        placeSpawner(helper, EntityType.ZOMBIE);
+        placeSpawner(helper, EntityTypes.ZOMBIE);
         BlockPos pos = helper.absolutePos(SPAWNER);
         ItemStack key = new ItemStack(ModRegistry.SPAWNER_KEY.get());
         Check.isTrue(helper, key.getMaxDamage() == 16, "key max durability is " + key.getMaxDamage());
@@ -161,7 +162,7 @@ public class SpawnerModGameTests {
     /** Silk touch makes a spawner drop itself; a plain pickaxe does not. */
     public static void silkTouchDropsSpawner(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.SKELETON);
+        SpawnerBlockEntity spawner = placeSpawner(helper, EntityTypes.SKELETON);
         BlockPos pos = helper.absolutePos(SPAWNER);
         BlockState state = level.getBlockState(pos);
 
@@ -193,8 +194,8 @@ public class SpawnerModGameTests {
         }
         BlockPos harvestPos = new BlockPos(1, 1, 1);
         BlockPos plainPos = new BlockPos(5, 1, 5);
-        Pig harvested = helper.spawnWithNoFreeWill(EntityType.PIG, harvestPos);
-        Pig plain = helper.spawnWithNoFreeWill(EntityType.PIG, plainPos);
+        Pig harvested = helper.spawnWithNoFreeWill(EntityTypes.PIG, harvestPos);
+        Pig plain = helper.spawnWithNoFreeWill(EntityTypes.PIG, plainPos);
 
         FakePlayer player = fakePlayer(helper, "harvest");
         try {
@@ -219,7 +220,7 @@ public class SpawnerModGameTests {
     /** With limited spawns on, a spawner counts its spawns and shuts itself off at the limit. */
     public static void limitedSpawnsCounter(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
+        SpawnerBlockEntity spawner = placeSpawner(helper, EntityTypes.PIG);
         BlockPos pos = helper.absolutePos(SPAWNER);
 
         // A player in the level is needed for BaseSpawner#isNearPlayer.
@@ -273,7 +274,7 @@ public class SpawnerModGameTests {
      * checks that the mod reports no belt items.
      */
     public static void curiosBeltSlot(GameTestHelper helper) {
-        placeSpawner(helper, EntityType.PIG);
+        placeSpawner(helper, EntityTypes.PIG);
         BlockPos pos = helper.absolutePos(SPAWNER);
         FakePlayer player = fakePlayer(helper, "curios");
         try {
@@ -292,7 +293,7 @@ public class SpawnerModGameTests {
 
     /** A redstone signal next to a spawner switches it off; removing the signal switches it back on. */
     public static void redstoneTogglesSpawner(GameTestHelper helper) {
-        SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
+        SpawnerBlockEntity spawner = placeSpawner(helper, EntityTypes.PIG);
         int range = SpawnerNbt.getShort(spawnerNbt(spawner), "RequiredPlayerRange");
         Check.isTrue(helper, range > 4, "unexpected default range " + range);
 
@@ -311,7 +312,7 @@ public class SpawnerModGameTests {
     /** The compass ignore toggle is saved with the spawner and read back on load. */
     public static void compassFlagSurvivesSaveAndLoad(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.SPIDER);
+        SpawnerBlockEntity spawner = placeSpawner(helper, EntityTypes.SPIDER);
         BlockPos pos = helper.absolutePos(SPAWNER);
         BlockState state = level.getBlockState(pos);
 

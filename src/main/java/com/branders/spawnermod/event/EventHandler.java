@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -151,7 +152,7 @@ public class EventHandler {
         entityItem.setDefaultPickUpDelay();
         world.addFreshEntity(entityItem);
 
-        logic.setEntityId(EntityType.AREA_EFFECT_CLOUD, world, world.getRandom(), pos);
+        logic.setEntityId(EntityTypes.AREA_EFFECT_CLOUD, world, world.getRandom(), pos);
         spawner.setChanged();
         world.sendBlockUpdated(pos, blockstate, blockstate, 3);
 

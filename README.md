@@ -5,8 +5,8 @@ NeoForge port of **[Enhanced Mob Spawners](https://github.com/andersblomqvist/en
 | | |
 |---|---|
 | **Mod id** | `spawnermod` |
-| **Version** | 1.2.13+mc26.1.2 |
-| **Minecraft** | 26.1.2 (this branch, `mc/26.1.2`) |
+| **Version** | 1.2.13+mc26.2 |
+| **Minecraft** | 26.2 (this branch, `mc/26.2`) |
 | **Loader** | NeoForge |
 | **License** | [CC0-1.0](LICENSE) (same as upstream) |
 
@@ -67,13 +67,13 @@ On other versions the check simply finds no Supplementaries and does nothing.
 
 ## Build
 
-This branch needs **Java 25** (Minecraft 26.1 requires it), both to build and to play.
+This branch needs **Java 25** (Minecraft 26.1+ requires it), both to build and to play.
 
 ```bash
 ./gradlew build
 ```
 
-Jar: `build/libs/spawnermod-1.2.13-mc26.1.2.jar`
+Jar: `build/libs/spawnermod-1.2.13-mc26.2.jar`
 
 ## Tests
 

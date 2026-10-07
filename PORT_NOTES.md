@@ -131,3 +131,12 @@ StreamCodec.composite is limited to 6 fields; packets with more use `StreamCodec
   `Player#displayClientMessage(msg, true)` is `sendOverlayMessage(msg)`.
 - `TestEnvironmentDefinition` is generic (`TestEnvironmentDefinition<?>`) in the GameTest
   registration.
+
+## Port to Minecraft 26.2 (NeoForge 26.2.0.88, branch `mc/26.2`)
+- Same build setup as 26.1.2 (Java 25, ModDevGradle 2.0.148, no Parchment).
+- Entity type constants moved from `EntityType` to `EntityTypes` (`EntityTypes.PIG`,
+  `EntityTypes.AREA_EFFECT_CLOUD`); `EntityType.by(...)` stays on `EntityType`.
+- Screens are opened with `Minecraft#gui.setScreen(...)` (the current screen is `gui.screen()`), and
+  the F1 "hide GUI" flag is `Minecraft#gui.hud.isHidden()` instead of `Options#hideGui`.
+- The main render target is `GameRenderer#mainRenderTarget()` (dev smoke test only).
+- `logoFile` in `neoforge.mods.toml` is deprecated; the square icon uses `iconFile`.

@@ -18,6 +18,6 @@ public final class SpawnerKeyScreen {
     }
 
     public static void open(BaseSpawner logic, BlockPos pos) {
-        Minecraft.getInstance().setScreen(new SpawnerConfigGui(Component.translatable(""), logic, pos));
+        Minecraft.getInstance().gui.setScreen(new SpawnerConfigGui(Component.translatable(""), logic, pos));
     }
 }
