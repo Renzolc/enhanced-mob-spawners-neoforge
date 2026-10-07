@@ -9,6 +9,7 @@ import com.branders.spawnermod.networking.packet.SyncSpawnerPacket;
 import com.branders.spawnermod.networking.packet.SyncSpawnerTrackingPacket;
 import com.branders.spawnermod.networking.packet.UpdateSpawnerTrackingPacket;
 import com.branders.spawnermod.spawner.CompassTrackingAccess;
+import com.branders.spawnermod.spawner.SpawnerNbt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -136,10 +137,10 @@ public class SpawnerModNetworking {
 
         BaseSpawner logic = spawner.getSpawner();
         BlockState blockstate = world.getBlockState(pos);
-        CompoundTag nbt = logic.save(new CompoundTag());
+        CompoundTag nbt = SpawnerNbt.save(logic);
 
         if (requiredPlayerRange == 0)
-            nbt.putShort("SpawnRange", nbt.getShort("RequiredPlayerRange"));
+            nbt.putShort("SpawnRange", SpawnerNbt.getShort(nbt, "RequiredPlayerRange"));
         else
             nbt.putShort("SpawnRange", (short) 4);
 
@@ -150,7 +151,7 @@ public class SpawnerModNetworking {
         nbt.putShort("MinSpawnDelay", minSpawnDelay);
         nbt.putShort("MaxSpawnDelay", maxSpawnDelay);
 
-        logic.load(world, pos, nbt);
+        SpawnerNbt.load(logic, world, pos, nbt);
         spawner.setChanged();
         world.sendBlockUpdated(pos, blockstate, blockstate, Block.UPDATE_ALL);
 

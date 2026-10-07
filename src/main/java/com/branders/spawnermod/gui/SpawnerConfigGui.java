@@ -5,6 +5,7 @@ import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.networking.packet.SyncSpawnerPacket;
 import com.branders.spawnermod.networking.packet.UpdateSpawnerTrackingPacket;
 import com.branders.spawnermod.spawner.CompassTrackingAccess;
+import com.branders.spawnermod.spawner.SpawnerNbt;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -90,15 +91,15 @@ public class SpawnerConfigGui extends Screen {
             customRange = (short) ConfigValues.get("default_spawner_range");
         }
 
-        CompoundTag nbt = logic.save(new CompoundTag());
-        delay = nbt.getShort("Delay");
-        minSpawnDelay = nbt.getShort("MinSpawnDelay");
-        maxSpawnDelay = nbt.getShort("MaxSpawnDelay");
-        spawnCount = nbt.getShort("SpawnCount");
-        maxNearbyEntities = nbt.getShort("MaxNearbyEntities");
-        requiredPlayerRange = nbt.getShort("RequiredPlayerRange");
+        CompoundTag nbt = SpawnerNbt.save(logic);
+        delay = SpawnerNbt.getShort(nbt, "Delay");
+        minSpawnDelay = SpawnerNbt.getShort(nbt, "MinSpawnDelay");
+        maxSpawnDelay = SpawnerNbt.getShort(nbt, "MaxSpawnDelay");
+        spawnCount = SpawnerNbt.getShort(nbt, "SpawnCount");
+        maxNearbyEntities = SpawnerNbt.getShort(nbt, "MaxNearbyEntities");
+        requiredPlayerRange = SpawnerNbt.getShort(nbt, "RequiredPlayerRange");
 
-        short spawnRange = nbt.getShort("SpawnRange");
+        short spawnRange = SpawnerNbt.getShort(nbt, "SpawnRange");
         if (spawnRange > 4) {
             disabled = true;
             cachedDisabled = true;
@@ -119,7 +120,7 @@ public class SpawnerConfigGui extends Screen {
         if (ConfigValues.get("limited_spawns_enabled") != 0) {
             limitedSpawns = true;
             if (nbt.contains("spawns")) {
-                spawns = nbt.getShort("spawns");
+                spawns = SpawnerNbt.getShort(nbt, "spawns");
                 if (ConfigValues.get("limited_spawns_amount") - spawns == 0) {
                     disabled = true;
                 }

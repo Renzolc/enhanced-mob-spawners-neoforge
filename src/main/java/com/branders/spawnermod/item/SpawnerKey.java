@@ -1,6 +1,6 @@
 package com.branders.spawnermod.item;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.gui.SpawnerConfigGui;
@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -61,10 +62,10 @@ public class SpawnerKey extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+            Consumer<Component> tooltip, TooltipFlag flag) {
         if (ConfigValues.get("disable_spawner_config") != 0) {
-            tooltip.add(TOOL_TIP);
+            tooltip.accept(TOOL_TIP);
         }
     }
 

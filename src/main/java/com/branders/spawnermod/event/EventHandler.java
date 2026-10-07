@@ -7,11 +7,11 @@ import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.item.SpawnerKey;
 import com.branders.spawnermod.mixin.UpdateNeighborMixin;
 import com.branders.spawnermod.registry.ModRegistry;
+import com.branders.spawnermod.spawner.SpawnerNbt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -127,18 +127,9 @@ public class EventHandler {
 
         BaseSpawner logic = spawner.getSpawner();
 
-        CompoundTag nbt = logic.save(new CompoundTag());
-        Tag spawnData = nbt.get("SpawnData");
-        if (spawnData == null)
+        String entityString = SpawnerNbt.entityId(SpawnerNbt.save(logic));
+        if (entityString == null)
             return InteractionResult.PASS;
-
-        String entityString = spawnData.getAsString();
-
-        if (entityString.indexOf('"') == -1)
-            return InteractionResult.PASS;
-
-        entityString = entityString.substring(entityString.indexOf('"') + 1);
-        entityString = entityString.substring(0, entityString.indexOf('"'));
 
         if (entityString.contains("area_effect_cloud"))
             return InteractionResult.PASS;
@@ -191,18 +182,18 @@ public class EventHandler {
             return;
 
         BaseSpawner logic = spawner.getSpawner();
-        CompoundTag nbt = logic.save(new CompoundTag());
+        CompoundTag nbt = SpawnerNbt.save(logic);
 
         if (world.hasNeighborSignal(spawnerPos)) {
-            short value = nbt.getShort("RequiredPlayerRange");
+            short value = SpawnerNbt.getShort(nbt, "RequiredPlayerRange");
 
-            if (nbt.getShort("SpawnRange") > 4)
+            if (SpawnerNbt.getShort(nbt, "SpawnRange") > 4)
                 return;
 
             nbt.putShort("SpawnRange", value);
             nbt.putShort("RequiredPlayerRange", (short) 0);
         } else {
-            short pr = nbt.getShort("SpawnRange");
+            short pr = SpawnerNbt.getShort(nbt, "SpawnRange");
 
             if (pr <= 4)
                 return;
@@ -211,7 +202,7 @@ public class EventHandler {
             nbt.putShort("SpawnRange", (short) 4);
         }
 
-        logic.load(world, spawnerPos, nbt);
+        SpawnerNbt.load(logic, world, spawnerPos, nbt);
         spawner.setChanged();
         world.sendBlockUpdated(spawnerPos, blockstate, blockstate, Block.UPDATE_ALL);
     }

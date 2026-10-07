@@ -1,12 +1,14 @@
 package com.branders.spawnermod.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.branders.spawnermod.config.ConfigValues;
+import com.branders.spawnermod.spawner.SpawnerNbt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.Level;
 @Mixin(BaseSpawner.class)
 public class SpawnerRangeMixin {
 
+    @Unique
     private boolean rangeSet = false;
 
     @Inject(at = @At("HEAD"), method = "isNearPlayer", cancellable = true)
@@ -28,23 +31,23 @@ public class SpawnerRangeMixin {
             rangeSet = true;
 
             BaseSpawner logic = (BaseSpawner) (Object) this;
-            CompoundTag nbt = logic.save(new CompoundTag());
+            CompoundTag nbt = SpawnerNbt.save(logic);
             nbt.putShort("RequiredPlayerRange", (short) range);
-            logic.load(level, spawner, nbt);
+            SpawnerNbt.load(logic, level, spawner, nbt);
         }
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;getShort(Ljava/lang/String;)S"), method = "load")
+    @Inject(at = @At("HEAD"), method = "load")
     private void readNbt(Level world, BlockPos pos, CompoundTag nbt, CallbackInfo info) {
         if (ConfigValues.get("default_spawner_range_enabled") == 0)
             return;
-        rangeSet = nbt.getBoolean("RangeSet");
+        rangeSet = SpawnerNbt.getBoolean(nbt, "RangeSet", false);
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;putShort(Ljava/lang/String;S)V"), method = "save")
+    @Inject(at = @At("RETURN"), method = "save")
     private void writeNbt(CompoundTag nbt, CallbackInfoReturnable<CompoundTag> info) {
         if (ConfigValues.get("default_spawner_range_enabled") == 0)
             return;
-        nbt.putBoolean("RangeSet", rangeSet);
+        info.getReturnValue().putBoolean("RangeSet", rangeSet);
     }
 }

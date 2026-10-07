@@ -37,9 +37,7 @@ public class CompassTrackingMixin implements CompassTrackingAccess {
 
     @Inject(method = "load", at = @At("RETURN"))
     private void spawnermod$readTracking(Level level, BlockPos pos, CompoundTag tag, CallbackInfo ci) {
-        if (tag.contains(NBT_KEY)) {
-            this.spawnermod$compassTracking = tag.getBoolean(NBT_KEY);
-        }
+        tag.getBoolean(NBT_KEY).ifPresent(tracking -> this.spawnermod$compassTracking = tracking);
     }
 
     @Inject(method = "save", at = @At("RETURN"))

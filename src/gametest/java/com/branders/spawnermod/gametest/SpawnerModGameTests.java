@@ -12,12 +12,12 @@ import com.branders.spawnermod.networking.SpawnerModNetworking;
 import com.branders.spawnermod.networking.packet.SyncSpawnerPacket;
 import com.branders.spawnermod.registry.ModRegistry;
 import com.branders.spawnermod.spawner.CompassTrackingAccess;
+import com.branders.spawnermod.spawner.SpawnerNbt;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -44,18 +44,13 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
-import net.neoforged.neoforge.gametest.GameTestHolder;
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * GameTests for the server-side behaviour of Enhanced Mob Spawners.
- * Run with {@code ./gradlew runGameTestServer}.
+ * Run with {@code ./gradlew runGameTestServer}; registered in {@link SpawnerModGameTestRegistration}.
  */
-@GameTestHolder(SpawnerMod.MOD_ID)
-@PrefixGameTestTemplate(false)
 public class SpawnerModGameTests {
 
-    private static final String EMPTY = "empty";
     private static final BlockPos SPAWNER = new BlockPos(3, 1, 3);
 
     // ---------------------------------------------------------------- helpers
@@ -67,10 +62,7 @@ public class SpawnerModGameTests {
             }
         }
         helper.setBlock(SPAWNER, Blocks.SPAWNER);
-        BlockEntity be = helper.getBlockEntity(SPAWNER);
-        if (!(be instanceof SpawnerBlockEntity spawner)) {
-            throw new IllegalStateException("No spawner block entity at " + SPAWNER);
-        }
+        SpawnerBlockEntity spawner = helper.getBlockEntity(SPAWNER, SpawnerBlockEntity.class);
         spawner.setEntityId(type, helper.getLevel().getRandom());
         return spawner;
     }
@@ -85,7 +77,7 @@ public class SpawnerModGameTests {
     }
 
     private static CompoundTag spawnerNbt(SpawnerBlockEntity spawner) {
-        return spawner.getSpawner().save(new CompoundTag());
+        return SpawnerNbt.save(spawner.getSpawner());
     }
 
     /**
@@ -95,7 +87,7 @@ public class SpawnerModGameTests {
     private static FakePlayer addWatcher(GameTestHelper helper, BlockPos absolutePos) {
         ServerLevel level = helper.getLevel();
         FakePlayer watcher = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "ems_watcher"));
-        watcher.moveTo(absolutePos.getX() + 0.5D, absolutePos.getY() + 2.0D, absolutePos.getZ() + 0.5D);
+        watcher.snapTo(absolutePos.getX() + 0.5D, absolutePos.getY() + 2.0D, absolutePos.getZ() + 0.5D);
         level.addNewPlayer(watcher);
         return watcher;
     }
@@ -105,14 +97,13 @@ public class SpawnerModGameTests {
     }
 
     private static void assertShort(GameTestHelper helper, CompoundTag nbt, String key, int expected) {
-        int actual = nbt.getShort(key);
-        helper.assertTrue(actual == expected, key + " expected " + expected + " but was " + actual);
+        int actual = SpawnerNbt.getShort(nbt, key);
+        Check.isTrue(helper, actual == expected, key + " expected " + expected + " but was " + actual);
     }
 
     // ------------------------------------------------------------------ tests
 
     /** Settings sent by the Spawner Key GUI are written to the spawner on the server. */
-    @GameTest(template = EMPTY)
     public static void keySettingsAppliedServerSide(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
@@ -120,7 +111,7 @@ public class SpawnerModGameTests {
         FakePlayer player = fakePlayer(helper, "settings");
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModRegistry.SPAWNER_KEY.get()));
         try {
-            helper.assertTrue(SpawnerModNetworking.applySpawnerSettings(level,
+            Check.isTrue(helper, SpawnerModNetworking.applySpawnerSettings(level,
                     new SyncSpawnerPacket(pos, 10, 6, 64, 12, 100, 400), player), "settings were not applied");
             CompoundTag nbt = spawnerNbt(spawner);
             assertShort(helper, nbt, "Delay", 10);
@@ -144,14 +135,13 @@ public class SpawnerModGameTests {
     }
 
     /** The key has 16 durability and each applied save costs one. */
-    @GameTest(template = EMPTY)
     public static void keyDurability16To15(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         placeSpawner(helper, EntityType.ZOMBIE);
         BlockPos pos = helper.absolutePos(SPAWNER);
         ItemStack key = new ItemStack(ModRegistry.SPAWNER_KEY.get());
-        helper.assertTrue(key.getMaxDamage() == 16, "key max durability is " + key.getMaxDamage());
-        helper.assertTrue(key.getDamageValue() == 0, "new key is already damaged");
+        Check.isTrue(helper, key.getMaxDamage() == 16, "key max durability is " + key.getMaxDamage());
+        Check.isTrue(helper, key.getDamageValue() == 0, "new key is already damaged");
 
         FakePlayer player = fakePlayer(helper, "durability");
         player.setItemInHand(InteractionHand.MAIN_HAND, key);
@@ -159,9 +149,9 @@ public class SpawnerModGameTests {
             SpawnerModNetworking.applySpawnerSettings(level, new SyncSpawnerPacket(pos, 20, 4, 32, 6, 200, 800),
                     player);
             ItemStack after = player.getMainHandItem();
-            helper.assertTrue(after.is(ModRegistry.SPAWNER_KEY.get()), "key disappeared");
+            Check.isTrue(helper, after.is(ModRegistry.SPAWNER_KEY.get()), "key disappeared");
             int remaining = after.getMaxDamage() - after.getDamageValue();
-            helper.assertTrue(remaining == 15, "remaining durability expected 15 but was " + remaining);
+            Check.isTrue(helper, remaining == 15, "remaining durability expected 15 but was " + remaining);
         } finally {
             player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         }
@@ -169,7 +159,6 @@ public class SpawnerModGameTests {
     }
 
     /** Silk touch makes a spawner drop itself; a plain pickaxe does not. */
-    @GameTest(template = EMPTY)
     public static void silkTouchDropsSpawner(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.SKELETON);
@@ -182,20 +171,19 @@ public class SpawnerModGameTests {
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                 .withParameter(LootContextParams.TOOL, silkPick)
                 .withOptionalParameter(LootContextParams.BLOCK_ENTITY, spawner));
-        helper.assertTrue(silkDrops.stream().anyMatch(s -> s.is(Items.SPAWNER)),
+        Check.isTrue(helper, silkDrops.stream().anyMatch(s -> s.is(Items.SPAWNER)),
                 "silk touch drops were " + silkDrops);
 
         List<ItemStack> plainDrops = state.getDrops(new LootParams.Builder(level)
                 .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
                 .withParameter(LootContextParams.TOOL, new ItemStack(Items.DIAMOND_PICKAXE))
                 .withOptionalParameter(LootContextParams.BLOCK_ENTITY, spawner));
-        helper.assertFalse(plainDrops.stream().anyMatch(s -> s.is(Items.SPAWNER)),
+        Check.isFalse(helper, plainDrops.stream().anyMatch(s -> s.is(Items.SPAWNER)),
                 "plain pickaxe dropped a spawner: " + plainDrops);
         helper.succeed();
     }
 
     /** A kill with a Spawn Harvest weapon drops the mob's spawn egg; a plain weapon does not. */
-    @GameTest(template = EMPTY)
     public static void spawnHarvestKillDropsEgg(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         for (int x = 0; x < 7; x++) {
@@ -222,14 +210,13 @@ public class SpawnerModGameTests {
         }
 
         helper.succeedWhen(() -> {
-            helper.assertTrue(harvested.isDeadOrDying() && plain.isDeadOrDying(), "pigs are still alive");
+            Check.isTrue(helper, harvested.isDeadOrDying() && plain.isDeadOrDying(), "pigs are still alive");
             helper.assertItemEntityPresent(Items.PIG_SPAWN_EGG, harvestPos, 2.0D);
             helper.assertItemEntityNotPresent(Items.PIG_SPAWN_EGG, plainPos, 2.0D);
         });
     }
 
     /** With limited spawns on, a spawner counts its spawns and shuts itself off at the limit. */
-    @GameTest(template = EMPTY, batch = "spawnermod_limited_spawns", timeoutTicks = 200)
     public static void limitedSpawnsCounter(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
@@ -261,7 +248,7 @@ public class SpawnerModGameTests {
         nbt.putShort("RequiredPlayerRange", (short) 16);
         nbt.putShort("SpawnRange", (short) 4);
         nbt.putShort("spawns", (short) 0);
-        spawner.getSpawner().load(level, pos, nbt);
+        SpawnerNbt.load(spawner.getSpawner(), level, pos, nbt);
 
         helper.runAfterDelay(60, () -> {
             CompoundTag after = spawnerNbt(spawner);
@@ -271,11 +258,11 @@ public class SpawnerModGameTests {
             ConfigValues.put("limited_spawns_enabled", oldEnabled);
             ConfigValues.put("limited_spawns_amount", oldAmount);
 
-            helper.assertTrue(after.getShort("spawns") == 2, "spawn counter is " + after.getShort("spawns")
+            Check.isTrue(helper, SpawnerNbt.getShort(after, "spawns") == 2, "spawn counter is " + SpawnerNbt.getShort(after, "spawns")
                     + " (pigs=" + pigs + ", watcher at " + watcherPos + ", spawner at " + pos + ")");
-            helper.assertTrue(after.getShort("RequiredPlayerRange") == 0,
-                    "spawner was not shut off, RequiredPlayerRange=" + after.getShort("RequiredPlayerRange"));
-            helper.assertTrue(pigs == 2, "expected 2 spawned pigs but found " + pigs);
+            Check.isTrue(helper, SpawnerNbt.getShort(after, "RequiredPlayerRange") == 0,
+                    "spawner was not shut off, RequiredPlayerRange=" + SpawnerNbt.getShort(after, "RequiredPlayerRange"));
+            Check.isTrue(helper, pigs == 2, "expected 2 spawned pigs but found " + pigs);
             helper.succeed();
         });
     }
@@ -285,7 +272,6 @@ public class SpawnerModGameTests {
      * Run with {@code ./gradlew runGameTestServer -PwithCurios}; without Curios this test only
      * checks that the mod reports no belt items.
      */
-    @GameTest(template = EMPTY, batch = "spawnermod_curios")
     public static void curiosBeltSlot(GameTestHelper helper) {
         placeSpawner(helper, EntityType.PIG);
         BlockPos pos = helper.absolutePos(SPAWNER);
@@ -295,7 +281,7 @@ public class SpawnerModGameTests {
                 CuriosBeltChecks.run(helper, player, pos);
                 SpawnerMod.LOGGER.info("curiosBeltSlot: checked with Curios loaded");
             } else {
-                helper.assertFalse(WornSpawnerItems.hasBeltKey(player), "belt key reported without Curios");
+                Check.isFalse(helper, WornSpawnerItems.hasBeltKey(player), "belt key reported without Curios");
                 SpawnerMod.LOGGER.info("curiosBeltSlot: Curios not loaded, belt checks skipped");
             }
         } finally {
@@ -305,11 +291,10 @@ public class SpawnerModGameTests {
     }
 
     /** A redstone signal next to a spawner switches it off; removing the signal switches it back on. */
-    @GameTest(template = EMPTY)
     public static void redstoneTogglesSpawner(GameTestHelper helper) {
         SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.PIG);
-        int range = spawnerNbt(spawner).getShort("RequiredPlayerRange");
-        helper.assertTrue(range > 4, "unexpected default range " + range);
+        int range = SpawnerNbt.getShort(spawnerNbt(spawner), "RequiredPlayerRange");
+        Check.isTrue(helper, range > 4, "unexpected default range " + range);
 
         helper.setBlock(SPAWNER.east(), Blocks.REDSTONE_BLOCK);
         CompoundTag powered = spawnerNbt(spawner);
@@ -324,36 +309,35 @@ public class SpawnerModGameTests {
     }
 
     /** The compass ignore toggle is saved with the spawner and read back on load. */
-    @GameTest(template = EMPTY)
     public static void compassFlagSurvivesSaveAndLoad(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         SpawnerBlockEntity spawner = placeSpawner(helper, EntityType.SPIDER);
         BlockPos pos = helper.absolutePos(SPAWNER);
         BlockState state = level.getBlockState(pos);
 
-        helper.assertTrue(((CompassTrackingAccess) spawner.getSpawner()).spawnermod$isCompassTracking(),
+        Check.isTrue(helper, ((CompassTrackingAccess) spawner.getSpawner()).spawnermod$isCompassTracking(),
                 "new spawner should be tracked");
-        helper.assertTrue(SpawnerModNetworking.applyTracking(level, pos, false), "toggle was not applied");
+        Check.isTrue(helper, SpawnerModNetworking.applyTracking(level, pos, false), "toggle was not applied");
 
         CompoundTag saved = spawner.saveWithFullMetadata(level.registryAccess());
-        helper.assertTrue(saved.contains(CompassTrackingAccess.NBT_KEY), "flag missing from saved NBT");
+        Check.isTrue(helper, saved.contains(CompassTrackingAccess.NBT_KEY), "flag missing from saved NBT");
 
         BlockEntity loaded = BlockEntity.loadStatic(pos, state, saved, level.registryAccess());
-        helper.assertTrue(loaded instanceof SpawnerBlockEntity, "reloaded block entity is " + loaded);
-        helper.assertFalse(((CompassTrackingAccess) ((SpawnerBlockEntity) loaded).getSpawner())
+        Check.isTrue(helper, loaded instanceof SpawnerBlockEntity, "reloaded block entity is " + loaded);
+        Check.isFalse(helper, ((CompassTrackingAccess) ((SpawnerBlockEntity) loaded).getSpawner())
                 .spawnermod$isCompassTracking(), "ignored spawner became tracked after reload");
 
         // Spawners saved before the flag existed stay tracked.
         saved.remove(CompassTrackingAccess.NBT_KEY);
         BlockEntity legacy = BlockEntity.loadStatic(pos, state, saved, level.registryAccess());
-        helper.assertTrue(((CompassTrackingAccess) ((SpawnerBlockEntity) legacy).getSpawner())
+        Check.isTrue(helper, ((CompassTrackingAccess) ((SpawnerBlockEntity) legacy).getSpawner())
                 .spawnermod$isCompassTracking(), "legacy spawner should be tracked");
 
         // And back on again.
         SpawnerModNetworking.applyTracking(level, pos, true);
         BlockEntity again = BlockEntity.loadStatic(pos, state,
                 spawner.saveWithFullMetadata(level.registryAccess()), level.registryAccess());
-        helper.assertTrue(((CompassTrackingAccess) ((SpawnerBlockEntity) again).getSpawner())
+        Check.isTrue(helper, ((CompassTrackingAccess) ((SpawnerBlockEntity) again).getSpawner())
                 .spawnermod$isCompassTracking(), "re-enabled spawner is not tracked after reload");
         helper.succeed();
     }

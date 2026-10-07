@@ -66,3 +66,19 @@ StreamCodec.composite is limited to 6 fields; packets with more use `StreamCodec
   now reacts when the notified block is the spawner itself.
 - `Mob#dropFromLootTable` gained a `ServerLevel` parameter. `MinecraftServer#tell` is `schedule`.
 - `Registry#get(ResourceLocation)` returns an `Optional`; lookups use `getValue`.
+
+## Port to Minecraft 1.21.5 (NeoForge 21.5.98, branch `mc/1.21.5`)
+- `CompoundTag` getters return `Optional`. All spawner NBT access goes through
+  `spawner/SpawnerNbt` (`getShortOr`, `getBooleanOr`, entity id from `SpawnData.entity.id`).
+- `BaseSpawner#load` no longer calls `CompoundTag#getShort`, so the limited-spawns and range
+  mixins read their fields at `HEAD` of `load` and write them into the returned tag at `RETURN`
+  of `save`.
+- `Tag#getAsString` is gone; the egg drop and limited-spawns checks read the entity id from the
+  `SpawnData` compound instead of parsing SNBT.
+- `Item#appendHoverText` takes `TooltipDisplay` and a `Consumer<Component>`.
+- GameTests use the data-driven system: test bodies are `minecraft:test_function` entries and
+  `SpawnerModGameTestRegistration` registers `FunctionGameTestInstance`s with
+  `RegisterGameTestsEvent`. The limited-spawns and Curios tests have their own environments, so
+  they run in separate batches. Tests are only registered in the GameTest server (NeoForge fires
+  the event after the registries are frozen on a dev dedicated server).
+- `Entity#moveTo` is `snapTo`; `GameTestHelper#assertTrue` takes a `Component`.
