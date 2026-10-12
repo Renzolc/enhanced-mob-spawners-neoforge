@@ -33,6 +33,13 @@ final class CuriosBeltChecks {
         stacks.setStackInSlot(0, new ItemStack(ModRegistry.SPAWNER_COMPASS.get()));
         helper.assertTrue(WornSpawnerItems.hasActiveCompass(player), "belt compass is not active");
         helper.assertFalse(WornSpawnerItems.hasBeltKey(player), "belt compass was taken for a key");
+        Boolean disabled = WornSpawnerItems.toggleCarriedCompasses(player);
+        helper.assertTrue(Boolean.FALSE.equals(disabled), "belt toggle did not turn the compass off");
+        helper.assertTrue(WornSpawnerItems.hasAnyCompass(player), "disabled belt compass is no longer carried");
+        helper.assertFalse(WornSpawnerItems.hasActiveCompass(player), "disabled belt compass still counts as active");
+        Boolean enabled = WornSpawnerItems.toggleCarriedCompasses(player);
+        helper.assertTrue(Boolean.TRUE.equals(enabled), "belt toggle did not turn the compass on");
+        helper.assertTrue(WornSpawnerItems.hasActiveCompass(player), "belt compass stayed off");
 
         // Key on the belt, empty hands: applying settings damages the belt key.
         stacks.setStackInSlot(0, new ItemStack(ModRegistry.SPAWNER_KEY.get()));
