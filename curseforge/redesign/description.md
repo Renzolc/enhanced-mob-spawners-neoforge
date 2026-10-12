@@ -25,7 +25,7 @@ Released under CC0, the same license as [Branders' source](https://github.com/an
 - ✨ **Enchantable key:** The Spawner Key has 16 durability, each save costs 1, and it takes Mending and Unbreaking.
 - 🗡️ **Spawn Harvest:** A treasure enchantment for swords, axes, bows, crossbows and knives. A kill with it always drops that mob's spawn egg. It is never offered in the enchanting table.
 - 🚫 **No random egg drops:** Branders' random egg drop chance is removed. Eggs from kills only come from Spawn Harvest.
-- 🧭 **Spawner Compass:** Shapeless recipe from a compass and a mob spawner. It points to the nearest tracked spawner within 128 blocks and shows the distance on screen.
+- 🧭 **Spawner Compass:** Shapeless recipe from a compass and a mob spawner. It points to the nearest tracked spawner within 128 blocks. Right-click, or the Toggle Spawner Compass control, turns tracking off or on whether the compass is in the hotbar or on a belt. Tracking off shows "A spawner has been detected nearby". Tracking on replaces that line with the compass icon and the distance under it. That readout starts at the top center. The mod config screen (Pause, Mods, Enhanced Mob Spawners) can move it to any corner or bottom center, or by a pixel offset. If Jade's tooltip covers it, the readout steps aside.
 - 📡 **Compass tracking:** A button on the Spawner Key screen hides a spawner from the compass. Spawners you haven't changed stay tracked.
 - 🎽 **Belt slots:** With Curios, the key and the compass can go in a belt slot. With Supplementaries too, missing belt slots are added so there are at least four.
 
@@ -36,6 +36,8 @@ Released under CC0, the same license as [Branders' source](https://github.com/an
 ![The Spawner Key config screen](https://raw.githubusercontent.com/Renzolc/enhanced-mob-spawners-neoforge/main/curseforge/redesign/media-0-spawner-config.png)
 
 ![The Spawner Compass detecting a spawner and in a belt slot](https://raw.githubusercontent.com/Renzolc/enhanced-mob-spawners-neoforge/main/curseforge/redesign/media-1-spawner-compass.png)
+
+![Place the compass tracker at the top, a corner, or the bottom](https://raw.githubusercontent.com/Renzolc/enhanced-mob-spawners-neoforge/main/curseforge/redesign/media-4-compass-tracker.png)
 
 ![The Spawn Harvest enchantment](https://raw.githubusercontent.com/Renzolc/enhanced-mob-spawners-neoforge/main/curseforge/redesign/media-2-spawn-harvest.png)
 
@@ -66,6 +68,8 @@ Settings are in `.minecraft/config/spawnermod.json`. On/off values use 1 for tru
 - `default_spawner_range_enabled`, `default_spawner_range` (52): a default player range for every spawner.
 - `spawner_hardness` (5): how hard spawners are to mine.
 - One entry per spawn egg to turn eggs off for specific mobs.
+- `compass_hud_anchor`: where the compass tracker sits. 0 is top center, then top left, top right, bottom left, bottom right, and bottom center. The same screen is Pause, Mods, Enhanced Mob Spawners, Config.
+- `compass_hud_offset_x`, `compass_hud_offset_y`: extra pixels from that spot. Positive X moves right and positive Y moves down.
 
 `monster_egg_drop_chance` is still in the file but has no effect in this fork, because eggs from kills only come from Spawn Harvest.
 
