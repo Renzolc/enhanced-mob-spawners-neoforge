@@ -50,6 +50,10 @@ public final class SpawnerModGameTestRegistration {
                 new Test("default", DEFAULT_TICKS, SpawnerModGameTests::redstoneTogglesSpawner));
         TESTS.put("compass_flag_survives_save_and_load",
                 new Test("default", DEFAULT_TICKS, SpawnerModGameTests::compassFlagSurvivesSaveAndLoad));
+        TESTS.put("compass_toggle_covers_hotbar",
+                new Test("default", DEFAULT_TICKS, SpawnerModGameTests::compassToggleCoversHotbar));
+        TESTS.put("compass_hud_placement",
+                new Test("default", DEFAULT_TICKS, SpawnerModGameTests::compassHudPlacement));
         TESTS.put("limited_spawns_counter",
                 new Test("limited_spawns", 200, SpawnerModGameTests::limitedSpawnsCounter));
         TESTS.put("curios_belt_slot",

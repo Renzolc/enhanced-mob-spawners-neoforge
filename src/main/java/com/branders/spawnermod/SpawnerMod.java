@@ -16,6 +16,7 @@ import com.branders.spawnermod.registry.ModRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
@@ -36,7 +37,7 @@ public class SpawnerMod {
 
     public static final EventHandler eventHandler = new EventHandler();
 
-    public SpawnerMod(IEventBus modEventBus) {
+    public SpawnerMod(IEventBus modEventBus, ModContainer container) {
         ModConfigManager.initConfig(MOD_ID);
 
         ModRegistry.register(modEventBus);
@@ -51,7 +52,7 @@ public class SpawnerMod {
         NeoForge.EVENT_BUS.addListener(SpawnerKeyEvents::onRightClickBlock);
 
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
-            SpawnerModClient.init(modEventBus);
+            SpawnerModClient.init(modEventBus, container);
         }
     }
 
