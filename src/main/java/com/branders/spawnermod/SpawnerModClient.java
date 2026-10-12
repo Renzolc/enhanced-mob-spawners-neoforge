@@ -1,12 +1,19 @@
 package com.branders.spawnermod;
 
+import com.branders.spawnermod.client.CompassTrackerScreen;
 import com.branders.spawnermod.client.SpawnerCompassAngle;
+import com.branders.spawnermod.client.SpawnerCompassClient;
 import com.branders.spawnermod.client.SpawnerCompassHud;
 
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.common.NeoForge;
+
 /**
  * Client-side initialization.
  * Payload handlers for playToClient are registered on the common bus in
@@ -19,9 +26,18 @@ public final class SpawnerModClient {
     private SpawnerModClient() {
     }
 
-    public static void init(IEventBus modEventBus) {
+    public static void init(IEventBus modEventBus, ModContainer container) {
+        container.registerExtensionPoint(IConfigScreenFactory.class,
+                (modContainer, parent) -> new CompassTrackerScreen(parent));
         modEventBus.addListener(SpawnerModClient::onRegisterItemModelProperties);
         modEventBus.addListener(SpawnerModClient::onRegisterGuiLayers);
+        modEventBus.addListener(SpawnerModClient::onRegisterKeys);
+        NeoForge.EVENT_BUS.addListener(SpawnerCompassClient::onClientTick);
+    }
+
+    private static void onRegisterKeys(RegisterKeyMappingsEvent event) {
+        event.registerCategory(SpawnerCompassClient.CATEGORY);
+        event.register(SpawnerCompassClient.TOGGLE_COMPASS);
     }
 
     private static void onRegisterGuiLayers(RegisterGuiLayersEvent event) {
