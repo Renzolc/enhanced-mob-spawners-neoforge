@@ -4,9 +4,11 @@ import com.branders.spawnermod.SpawnerMod;
 import com.branders.spawnermod.compat.WornSpawnerItems;
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.item.SpawnerKey;
+import com.branders.spawnermod.item.SpawnerCompassItem;
 import com.branders.spawnermod.networking.packet.SyncConfigPacket;
 import com.branders.spawnermod.networking.packet.SyncSpawnerPacket;
 import com.branders.spawnermod.networking.packet.SyncSpawnerTrackingPacket;
+import com.branders.spawnermod.networking.packet.ToggleCompassPacket;
 import com.branders.spawnermod.networking.packet.UpdateSpawnerTrackingPacket;
 import com.branders.spawnermod.spawner.CompassTrackingAccess;
 import com.branders.spawnermod.spawner.SpawnerNbt;
@@ -45,6 +47,23 @@ public class SpawnerModNetworking {
 
         registrar.playToClient(SyncSpawnerTrackingPacket.TYPE, SyncSpawnerTrackingPacket.STREAM_CODEC,
                 SpawnerModNetworking::handleSyncTracking);
+
+        registrar.playToServer(ToggleCompassPacket.TYPE, ToggleCompassPacket.STREAM_CODEC,
+                SpawnerModNetworking::handleToggleCompass);
+    }
+
+    private static void handleToggleCompass(ToggleCompassPacket payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            Boolean enabled = WornSpawnerItems.toggleCarriedCompasses(player);
+            if (enabled == null) {
+                player.displayClientMessage(Component.translatable("message.spawnermod.compass.none"), true);
+                return;
+            }
+            SpawnerCompassItem.announce(player, player.level(), enabled);
+        });
     }
 
     private static void handleUpdateTracking(UpdateSpawnerTrackingPacket payload, IPayloadContext context) {
