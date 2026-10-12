@@ -49,6 +49,11 @@ public class ConfigValues {
         // Logs the item id when the player right clicks a spawner.
         // Makes it easy to see what id's you want to blacklist.
         CONFIG_SPEC.put("display_item_id_from_right_click_in_log", 0);
+
+        // Client HUD. Not included in SyncConfigPacket.
+        CONFIG_SPEC.put("compass_hud_anchor", 0);
+        CONFIG_SPEC.put("compass_hud_offset_x", 0);
+        CONFIG_SPEC.put("compass_hud_offset_y", 0);
     }
 
     private static void addSpawnEggs() {
