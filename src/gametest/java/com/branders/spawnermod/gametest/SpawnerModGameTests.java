@@ -5,9 +5,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.branders.spawnermod.SpawnerMod;
+import com.branders.spawnermod.client.CompassHudAnchor;
+import com.branders.spawnermod.client.CompassHudPlacement;
 import com.branders.spawnermod.compat.WornSpawnerItems;
 import com.branders.spawnermod.config.ConfigValues;
 import com.branders.spawnermod.enchantment.ModEnchantments;
+import com.branders.spawnermod.item.SpawnerCompassItem;
 import com.branders.spawnermod.networking.SpawnerModNetworking;
 import com.branders.spawnermod.networking.packet.SyncSpawnerPacket;
 import com.branders.spawnermod.registry.ModRegistry;
@@ -356,5 +359,64 @@ public class SpawnerModGameTests {
         helper.assertTrue(((CompassTrackingAccess) ((SpawnerBlockEntity) again).getSpawner())
                 .spawnermod$isCompassTracking(), "re-enabled spawner is not tracked after reload");
         helper.succeed();
+    }
+
+    /** The toggle key flips every hotbar compass together, and a disabled compass is still carried. */
+    @GameTest(template = EMPTY)
+    public static void compassToggleCoversHotbar(GameTestHelper helper) {
+        FakePlayer player = fakePlayer(helper, "compass");
+        ItemStack compass = new ItemStack(ModRegistry.SPAWNER_COMPASS.get());
+        player.getInventory().setItem(0, compass);
+        try {
+            helper.assertTrue(SpawnerCompassItem.isEnabled(compass), "new compass starts off");
+            helper.assertTrue(WornSpawnerItems.hasActiveCompass(player), "hotbar compass is not active");
+            Boolean disabled = WornSpawnerItems.toggleCarriedCompasses(player);
+            helper.assertTrue(Boolean.FALSE.equals(disabled), "hotbar toggle did not turn the compass off");
+            helper.assertTrue(WornSpawnerItems.hasAnyCompass(player), "disabled compass is no longer carried");
+            helper.assertFalse(WornSpawnerItems.hasActiveCompass(player), "disabled compass still counts as tracking");
+            Boolean enabled = WornSpawnerItems.toggleCarriedCompasses(player);
+            helper.assertTrue(Boolean.TRUE.equals(enabled), "hotbar toggle did not turn the compass on");
+            helper.assertTrue(WornSpawnerItems.hasActiveCompass(player), "re-enabled compass does not count");
+        } finally {
+            player.getInventory().setItem(0, ItemStack.EMPTY);
+        }
+        helper.succeed();
+    }
+
+    /** Presets, pixel offsets, and moving off a rectangle that covers the tracker. */
+    @GameTest(template = EMPTY)
+    public static void compassHudPlacement(GameTestHelper helper) {
+        int screenWidth = 200;
+        int screenHeight = 100;
+        int widgetWidth = 20;
+        int widgetHeight = 10;
+        assertPlace(helper, CompassHudAnchor.TOP_CENTER, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(), 90, 2, "top center");
+        assertPlace(helper, CompassHudAnchor.TOP_LEFT, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(), 2, 2, "top left");
+        assertPlace(helper, CompassHudAnchor.TOP_RIGHT, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(), 178, 2, "top right");
+        assertPlace(helper, CompassHudAnchor.BOTTOM_LEFT, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(), 2, 88, "bottom left");
+        assertPlace(helper, CompassHudAnchor.BOTTOM_RIGHT, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(), 178, 88, "bottom right");
+        assertPlace(helper, CompassHudAnchor.BOTTOM_CENTER, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(), 90, 58, "bottom center");
+        assertPlace(helper, CompassHudAnchor.TOP_LEFT, screenWidth, screenHeight, widgetWidth, widgetHeight, 5, -2,
+                List.of(), 7, 0, "offset");
+        assertPlace(helper, CompassHudAnchor.TOP_CENTER, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(new CompassHudPlacement.Box(80, 0, 40, 30)), 90, 34, "below a top obstacle");
+        assertPlace(helper, CompassHudAnchor.TOP_LEFT, screenWidth, screenHeight, widgetWidth, widgetHeight, 0, 0,
+                List.of(new CompassHudPlacement.Box(0, 0, 30, 100)), 34, 2, "beside a tall obstacle");
+        helper.succeed();
+    }
+
+    private static void assertPlace(GameTestHelper helper, CompassHudAnchor anchor, int screenWidth, int screenHeight,
+            int widgetWidth, int widgetHeight, int offsetX, int offsetY, List<CompassHudPlacement.Box> obstacles,
+            int expectedX, int expectedY, String label) {
+        int[] placed = CompassHudPlacement.place(anchor, screenWidth, screenHeight, widgetWidth, widgetHeight, offsetX,
+                offsetY, obstacles);
+        helper.assertTrue(placed[0] == expectedX && placed[1] == expectedY, label + " expected " + expectedX + ","
+                + expectedY + " but was " + placed[0] + "," + placed[1]);
     }
 }
