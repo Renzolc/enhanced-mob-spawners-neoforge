@@ -1,17 +1,26 @@
 package com.branders.spawnermod.client;
 
+import com.branders.spawnermod.SpawnerMod;
+import com.branders.spawnermod.item.SpawnerCompassItem;
+import com.branders.spawnermod.networking.packet.ToggleCompassPacket;
 import com.branders.spawnermod.spawner.CompassTrackingAccess;
+import com.mojang.blaze3d.platform.InputConstants;
 
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
  * Client target lookup for the spawner compass. The needle angle is computed by
@@ -27,6 +36,20 @@ public final class SpawnerCompassClient {
     /** Horizontal search radius, in blocks. */
     public static final int SEARCH_RADIUS = 128;
 
+    /**
+     * 1.21.9+ categories are ids. The controls heading is
+     * {@code key.category.spawnermod.spawnermod}.
+     */
+    public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(
+            ResourceLocation.fromNamespaceAndPath(SpawnerMod.MOD_ID, "spawnermod"));
+
+    /** Unbound until the player picks a key. Toggles every carried compass, hotbar or belt. */
+    public static final KeyMapping TOGGLE_COMPASS = new KeyMapping(
+            "key.spawnermod.toggle_compass",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY);
+
     /** How long a scan result is reused, in ticks. The needle still updates every frame. */
     private static final int CACHE_TICKS = 20;
 
@@ -39,8 +62,17 @@ public final class SpawnerCompassClient {
     private SpawnerCompassClient() {
     }
 
+    public static void onClientTick(ClientTickEvent.Post event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        while (TOGGLE_COMPASS.consumeClick()) {
+            if (minecraft.player != null && minecraft.screen == null) {
+                ClientPacketDistributor.sendToServer(new ToggleCompassPacket());
+            }
+        }
+    }
+
     static GlobalPos target(ClientLevel level, ItemStack stack, Entity entity) {
-        if (entity == null || level == null) {
+        if (entity == null || level == null || !SpawnerCompassItem.isEnabled(stack)) {
             return null;
         }
         // Hotbar icons are drawn for every slot, selected or not, with the local player.
