@@ -8,7 +8,11 @@
 
 ## 📖 ABOUT
 
-**Enhanced Mob Spawners NeoForge** is a NeoForge 1.21.1 port of **[Enhanced Mob Spawners](https://www.curseforge.com/minecraft/mc-mods/enhanced-mob-spawners) by Branders (Anders Blomqvist)**. Mine spawners with Silk Touch, take out or swap their spawn eggs, and tune them with the Spawner Key. The original design, features and assets are Branders' work. 🏆
+**Enhanced Mob Spawners NeoForge** is a NeoForge port of **[Enhanced Mob Spawners](https://www.curseforge.com/minecraft/mc-mods/enhanced-mob-spawners) by Branders (Anders Blomqvist)**. Mine spawners with Silk Touch, take out or swap their spawn eggs, and tune them with the Spawner Key. The original design, features and assets are Branders' work. 🏆
+
+It runs on **Minecraft 1.21.1, 1.21.4, 1.21.5, 1.21.8, 1.21.10, 1.21.11, 26.1.2 and 26.2**, with a matching NeoForge file for each version. 🗂️
+
+**🆕 New in 1.2.15:** one control now toggles every Spawner Compass you carry, the tracker shows the distance when tracking is on, and you can move the tracker anywhere on screen. The update is out for every supported version.
 
 This fork adds a few things of its own: the Spawner Key takes Mending and Unbreaking, the new **Spawn Harvest** enchantment replaces random egg drops, and the **Spawner Compass** finds spawners near you. Both the key and the compass fit in a Curios belt slot. 🧭
 
@@ -25,9 +29,12 @@ Released under CC0, the same license as [Branders' source](https://github.com/an
 - ✨ **Enchantable key:** The Spawner Key has 16 durability, each save costs 1, and it takes Mending and Unbreaking.
 - 🗡️ **Spawn Harvest:** A treasure enchantment for swords, axes, bows, crossbows and knives. A kill with it always drops that mob's spawn egg. It is never offered in the enchanting table.
 - 🚫 **No random egg drops:** Branders' random egg drop chance is removed. Eggs from kills only come from Spawn Harvest.
-- 🧭 **Spawner Compass:** Shapeless recipe from a compass and a mob spawner. It points to the nearest tracked spawner within 128 blocks. Right-click, or the Toggle Spawner Compass control, turns tracking off or on whether the compass is in the hotbar or on a belt. Tracking off shows "A spawner has been detected nearby". Tracking on replaces that line with the compass icon and the distance under it. That readout starts at the top center. The mod config screen (Pause, Mods, Enhanced Mob Spawners) can move it to any corner or bottom center, or by a pixel offset. If Jade's tooltip covers it, the readout steps aside.
-- 📡 **Compass tracking:** A button on the Spawner Key screen hides a spawner from the compass. Spawners you haven't changed stay tracked.
-- 🎽 **Belt slots:** With Curios, the key and the compass can go in a belt slot. With Supplementaries too, missing belt slots are added so there are at least four.
+- 🧭 **Spawner Compass:** Shapeless recipe from a compass and a mob spawner. It points to the nearest tracked spawner within 128 blocks.
+- 🔁 **One toggle for every compass:** Right-click a compass, or press the **Toggle Spawner Compass** control (unbound by default, set it in Controls). Every Spawner Compass you carry flips together: hotbar, offhand and Curios belt. The tooltip reads Tracking on or Tracking off.
+- 📍 **Tracker readout:** With tracking on, the tracker shows the compass icon and the distance in blocks under it. With tracking off, it only shows "A spawner has been detected nearby".
+- 🖥️ **Movable tracker:** Pause, Mods, Enhanced Mob Spawners, Config. It starts at top center, with presets for every corner and bottom center (just above the hotbar), plus X and Y pixel offsets. If Jade's tooltip covers it, the tracker steps aside.
+- 📡 **Per-spawner tracking:** The Compass tracking button on the Spawner Key screen hides one spawner from the compass. It is separate from the compass toggle. Spawners you haven't changed stay tracked.
+- 🎽 **Belt slots:** With Curios, the key and the compass can go in a belt slot. With Supplementaries too, missing belt slots are added so there are at least four (1.21.1).
 
 ![divider](https://raw.githubusercontent.com/Renzolc/enhanced-mob-spawners-neoforge/main/curseforge/redesign/divider-enhanced-mob-spawners-neoforge.png)
 
@@ -47,15 +54,19 @@ Released under CC0, the same license as [Branders' source](https://github.com/an
 
 ## 📦 INSTALLATION
 
-**⏩ INSTALL ON BOTH CLIENT AND SERVER (NEOFORGE 1.21.1)**
+**⏩ INSTALL ON BOTH CLIENT AND SERVER (NEOFORGE)**
+
+**⏩ MINECRAFT 1.21.1, 1.21.4, 1.21.5, 1.21.8, 1.21.10, 1.21.11, 26.1.2 AND 26.2. PICK THE FILE FOR YOUR VERSION**
 
 **⏩ NO REQUIRED DEPENDENCIES**
 
 **⏩ OPTIONAL: [CURIOS API](https://www.curseforge.com/minecraft/mc-mods/curios) 5 OR NEWER, FOR THE BELT SLOT**
 
-**⏩ OPTIONAL: [SUPPLEMENTARIES](https://www.curseforge.com/minecraft/mc-mods/supplementaries), FOR EXTRA BELT SLOTS**
+**⏩ OPTIONAL: [SUPPLEMENTARIES](https://www.curseforge.com/minecraft/mc-mods/supplementaries), FOR EXTRA BELT SLOTS (1.21.1)**
 
 Don't install this next to Branders' own Forge or Fabric version of Enhanced Mob Spawners: this port uses the same mod id, `spawnermod`.
+
+Only the Minecraft 1.21.1 build has been thoroughly tested. If you find a bug on another version, please leave a comment with the Minecraft version, a screenshot, and a short description of the bug. 🐞
 
 ![divider](https://raw.githubusercontent.com/Renzolc/enhanced-mob-spawners-neoforge/main/curseforge/redesign/divider-enhanced-mob-spawners-neoforge.png)
 
