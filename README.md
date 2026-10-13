@@ -50,18 +50,18 @@ If Curios is installed, the Spawner Key and Spawner Compass can be worn in the b
 Each Minecraft version has its own branch. Spawner Key screen with the compass ignore toggle,
 Spawner Compass, optional Curios belt slots, silk-touch spawners, Spawn Harvest, limited spawns,
 and key durability 16 are kept on every version. The compass tracking toggle, the compass
-readout, and its placement screen are on `main` (1.2.15) until the other branches are updated.
+readout, and its placement screen are on every branch at 1.2.15.
 
 | Minecraft | NeoForge | Java | Branch | Jar | Curios (optional) |
 |---|---|---|---|---|---|
 | 1.21.1 | 21.1.251+ | 21 | `main` | `spawnermod-1.2.15.jar` | 9.5.1 |
-| 1.21.4 | 21.4.158+ | 21 | `mc/1.21.4` | `spawnermod-1.2.13-mc1.21.4.jar` | 10.0.1 |
-| 1.21.5 | 21.5.98+ | 21 | `mc/1.21.5` | `spawnermod-1.2.13-mc1.21.5.jar` | 11.0.1 |
-| 1.21.8 | 21.8.54+ | 21 | `mc/1.21.8` | `spawnermod-1.2.13-mc1.21.8.jar` | 12.0.0 |
-| 1.21.10 | 21.10.64+ | 21 | `mc/1.21.10` | `spawnermod-1.2.13-mc1.21.10.jar` | 13.0.0 |
-| 1.21.11 | 21.11.45+ | 21 | `mc/1.21.11` | `spawnermod-1.2.13-mc1.21.11.jar` | 14.0.0 |
-| 26.1.2 | 26.1.2.114+ | 25 | `mc/26.1.2` | `spawnermod-1.2.13-mc26.1.2.jar` | 15.0.0 |
-| 26.2 | 26.2.0.88+ | 25 | `mc/26.2` | `spawnermod-1.2.13-mc26.2.jar` | 16.0.0 |
+| 1.21.4 | 21.4.158+ | 21 | `mc/1.21.4` | `spawnermod-1.2.15-mc1.21.4.jar` | 10.0.1 |
+| 1.21.5 | 21.5.98+ | 21 | `mc/1.21.5` | `spawnermod-1.2.15-mc1.21.5.jar` | 11.0.1 |
+| 1.21.8 | 21.8.54+ | 21 | `mc/1.21.8` | `spawnermod-1.2.15-mc1.21.8.jar` | 12.0.0 |
+| 1.21.10 | 21.10.64+ | 21 | `mc/1.21.10` | `spawnermod-1.2.15-mc1.21.10.jar` | 13.0.0 |
+| 1.21.11 | 21.11.45+ | 21 | `mc/1.21.11` | `spawnermod-1.2.15-mc1.21.11.jar` | 14.0.0 |
+| 26.1.2 | 26.1.2.114+ | 25 | `mc/26.1.2` | `spawnermod-1.2.15-mc26.1.2.jar` | 15.0.0 |
+| 26.2 | 26.2.0.88+ | 25 | `mc/26.2` | `spawnermod-1.2.15-mc26.2.jar` | 16.0.0 |
 
 Supplementaries is only released for 1.21.1, so the extra belt slots it triggers only apply there.
 On other versions the check simply finds no Supplementaries and does nothing.
