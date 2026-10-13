@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,15 +44,14 @@ public class SpawnerCompassItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             Boolean enabled = WornSpawnerItems.toggleCarriedCompasses(serverPlayer);
             if (enabled != null) {
                 announce(player, level, enabled);
             }
         }
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     public static void announce(Player player, Level level, boolean enabled) {
